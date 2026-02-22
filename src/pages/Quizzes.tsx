@@ -1,20 +1,24 @@
- import { useState, useMemo } from 'react';
- import { motion } from 'framer-motion';
+ import { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
  import { Brain, Trophy, Zap, Target, ChevronRight, Star, Lock, CheckCircle } from 'lucide-react';
  import ParticleBackground from '@/components/ParticleBackground';
  import Navbar from '@/components/Navbar';
  import Footer from '@/components/Footer';
  import GlowCard from '@/components/GlowCard';
- import { quizDomains, getLevelQuestions, getLevelCredits, sampleQuestions, QuizQuestion } from '@/data/quizQuestions';
+import { quizDomains as quizDomainsConst, getLevelQuestions, getLevelCredits, sampleQuestions, QuizQuestion } from '@/data/quizQuestions';
+import { api } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
+import Loading from '@/components/ui/Loading';
+import ErrorMessage from '@/components/ui/ErrorMessage';
  import GlowText from '@/components/GlowText';
  import GlowButton from '@/components/GlowButton';
  import QuizModal from '@/components/QuizModal';
  import { Badge } from '@/components/ui/badge';
  import { Progress } from '@/components/ui/progress';
  
- const domains = quizDomains.map((d) => ({ ...d, completed: 0 }));
- 
- const levels = Array.from({ length: 10 }, (_, i) => ({
+ const domains = quizDomainsConst.map((d) => ({ ...d, completed: 0 }));
+
+ const defaultLevels = Array.from({ length: 10 }, (_, i) => ({
    level: i + 1,
    questions: getLevelQuestions(i + 1),
    credits: getLevelCredits(i + 1),
@@ -31,6 +35,33 @@
      completed: 0,
      streak: 0,
    });
+   const [domainsState, setDomainsState] = useState(domains);
+   const [levelsState, setLevelsState] = useState(defaultLevels);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState<string | null>(null);
+
+   useEffect(() => {
+     let mounted = true;
+     setLoading(true);
+     Promise.all([api.get('/quiz-domains').catch(() => null), api.get('/quiz-levels').catch(() => null)])
+       .then(([d, l]) => {
+         if (!mounted) return;
+         if (Array.isArray(d) && d.length) setDomainsState(d);
+         if (Array.isArray(l) && l.length) setLevelsState(l);
+       })
+       .catch((err) => {
+         if (!mounted) return;
+         setError(err?.message || String(err));
+       })
+       .finally(() => {
+         if (!mounted) return;
+         setLoading(false);
+       });
+
+     return () => {
+       mounted = false;
+     };
+   }, []);
  
    const getQuestionsForDomain = (domainId: number): QuizQuestion[] => {
      const domain = quizDomains.find(d => d.id === domainId);
@@ -44,8 +75,8 @@
    };
  
    const selectedDomainData = useMemo(() => {
-     return quizDomains.find(d => d.id === selectedDomain);
-   }, [selectedDomain]);
+     return domainsState.find((d: any) => d.id === selectedDomain);
+   }, [selectedDomain, domainsState]);
  
    const handleStartQuiz = (level: number) => {
      if (!selectedDomain) return;
@@ -71,6 +102,9 @@
      if (!selectedDomain) return [];
      return getQuestionsForDomain(selectedDomain);
    }, [selectedDomain]);
+
+  if (loading) return <Loading message="Loading quizzes..." />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">

@@ -1,0 +1,30 @@
+name: Run tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Run frontend tests (Vitest)
+        run: npm test --if-present
+
+      - name: Run backend tests (Jest)
+        run: |
+          cd server
+          npm ci
+          npm test

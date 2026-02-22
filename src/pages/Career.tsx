@@ -1,4 +1,4 @@
- import { useState } from 'react';
+import { useState, useEffect } from 'react';
  import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
  import { Users, Briefcase, Clock, DollarSign, Star, ArrowRight, CheckCircle, GraduationCap, TrendingUp, Calendar, Send } from 'lucide-react';
@@ -12,9 +12,11 @@ import { Badge } from '@/components/ui/badge';
  import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
  import { Input } from '@/components/ui/input';
  import { Textarea } from '@/components/ui/textarea';
- import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { api } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const instructors = [
+const instructorsConst = [
   {
     id: 1,
     name: 'Alex Security',
@@ -65,14 +67,14 @@ const instructors = [
   },
 ];
 
-const benefits = [
+const benefitsConst = [
   { icon: DollarSign, title: 'Competitive Earnings', description: 'Earn up to ₹1,50,000+ per month' },
   { icon: Clock, title: 'Flexible Hours', description: 'Work part-time or full-time, your choice' },
   { icon: Users, title: 'Unlimited Students', description: 'No limit on how many students you can teach' },
   { icon: TrendingUp, title: 'Growth Platform', description: 'Build your personal brand and reputation' },
 ];
 
- const internships = [
+const internshipsConst = [
    {
      id: 1,
      title: 'Frontend Development Intern',
@@ -108,8 +110,8 @@ const benefits = [
  ];
  
 const Career = () => {
-   const { toast } = useToast();
-   const [formData, setFormData] = useState({
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
      name: '',
      email: '',
      phone: '',
@@ -127,6 +129,37 @@ const Career = () => {
      setFormData({ name: '', email: '', phone: '', position: '', message: '' });
    };
  
+  const [instructors, setInstructors] = useState(instructorsConst);
+  const [internships, setInternships] = useState(internshipsConst);
+  const [benefits, setBenefits] = useState(benefitsConst);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    Promise.all([api.get('/instructors').catch(() => null), api.get('/internships').catch(() => null), api.get('/career-benefits').catch(() => null)])
+      .then(([inst, intern, ben]) => {
+        if (!mounted) return;
+        if (Array.isArray(inst)) setInstructors(inst);
+        if (Array.isArray(intern)) setInternships(intern);
+        if (Array.isArray(ben)) setBenefits(ben);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err?.message || String(err));
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <Loading message="Loading career data..." />;
+  if (error) return <ErrorMessage message={error} />;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />
@@ -173,20 +206,28 @@ const Career = () => {
           >
             <h2 className="text-2xl font-bold text-center mb-8">Why Become an Instructor?</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {benefits.map((benefit, index) => (
-                <motion.div
-                  key={benefit.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 + index * 0.1 }}
-                >
-                  <GlowCard glowColor="purple">
-                    <benefit.icon className="w-10 h-10 text-secondary mb-4" />
-                    <h3 className="font-semibold mb-2">{benefit.title}</h3>
-                    <p className="text-sm text-muted-foreground">{benefit.description}</p>
-                  </GlowCard>
-                </motion.div>
-              ))}
+              {loading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i}><Skeleton className="h-36 w-full rounded-lg" /></div>
+                ))
+              ) : error ? (
+                <div className="text-center text-red-500">{error}</div>
+              ) : (
+                benefits.map((benefit, index) => (
+                  <motion.div
+                    key={benefit.title}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 + index * 0.1 }}
+                  >
+                    <GlowCard glowColor="purple">
+                      <benefit.icon className="w-10 h-10 text-secondary mb-4" />
+                      <h3 className="font-semibold mb-2">{benefit.title}</h3>
+                      <p className="text-sm text-muted-foreground">{benefit.description}</p>
+                    </GlowCard>
+                  </motion.div>
+                ))
+              )}
             </div>
           </motion.section>
 
@@ -268,43 +309,51 @@ const Career = () => {
            </div>
  
            <div className="grid md:grid-cols-2 gap-6">
-             {internships.map((internship, index) => (
-               <motion.div
-                 key={internship.id}
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ delay: 0.3 + index * 0.1 }}
-               >
-                 <GlowCard glowColor="cyan">
-                   <div className="flex items-start justify-between mb-4">
-                     <div>
-                       <h3 className="font-semibold text-lg">{internship.title}</h3>
-                       <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                         <Calendar className="w-4 h-4" />
-                         {internship.duration}
+             {loading ? (
+               Array.from({ length: 2 }).map((_, i) => (
+                 <div key={i}><Skeleton className="h-40 w-full rounded-lg" /></div>
+               ))
+             ) : error ? (
+               <div className="text-center text-red-500">{error}</div>
+             ) : (
+               internships.map((internship, index) => (
+                 <motion.div
+                   key={internship.id}
+                   initial={{ opacity: 0, y: 20 }}
+                   animate={{ opacity: 1, y: 0 }}
+                   transition={{ delay: 0.3 + index * 0.1 }}
+                 >
+                   <GlowCard glowColor="cyan">
+                     <div className="flex items-start justify-between mb-4">
+                       <div>
+                         <h3 className="font-semibold text-lg">{internship.title}</h3>
+                         <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                           <Calendar className="w-4 h-4" />
+                           {internship.duration}
+                         </div>
                        </div>
-                     </div>
-                     <Badge variant="outline" className="border-primary/50 text-primary">
-                       {internship.spots} spots left
-                     </Badge>
-                   </div>
-                   
-                   <p className="text-primary font-semibold mb-3">{internship.stipend}</p>
-                   
-                   <div className="flex flex-wrap gap-2 mb-4">
-                     {internship.skills.map((skill) => (
-                       <Badge key={skill} variant="secondary" className="text-xs">
-                         {skill}
+                       <Badge variant="outline" className="border-primary/50 text-primary">
+                         {internship.spots} spots left
                        </Badge>
-                     ))}
-                   </div>
-                   
-                   <GlowButton variant="outline" size="sm" className="w-full">
-                     Apply Now
-                   </GlowButton>
-                 </GlowCard>
-               </motion.div>
-             ))}
+                     </div>
+                     
+                     <p className="text-primary font-semibold mb-3">{internship.stipend}</p>
+                     
+                     <div className="flex flex-wrap gap-2 mb-4">
+                       {internship.skills.map((skill) => (
+                         <Badge key={skill} variant="secondary" className="text-xs">
+                           {skill}
+                         </Badge>
+                       ))}
+                     </div>
+                     
+                     <GlowButton variant="outline" size="sm" className="w-full">
+                       Apply Now
+                     </GlowButton>
+                   </GlowCard>
+                 </motion.div>
+               ))
+             )}
            </div>
          </motion.section>
  

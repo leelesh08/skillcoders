@@ -1,0 +1,42 @@
+name: Deploy backend to Cloud Run
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT }}
+
+      - name: Build and push image
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+          IMAGE: gcr.io/${{ secrets.GCP_PROJECT }}/skillcoders-backend:${{ github.sha }}
+        run: |
+          cd server
+          gcloud builds submit --tag $IMAGE .
+
+      - name: Deploy to Cloud Run
+        env:
+          PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+          IMAGE: gcr.io/${{ secrets.GCP_PROJECT }}/skillcoders-backend:${{ github.sha }}
+          REGION: ${{ secrets.GCP_REGION }}
+        run: |
+          gcloud run deploy skillcoders-backend \
+            --image $IMAGE \
+            --platform managed \
+            --region $REGION \
+            --allow-unauthenticated \
+            --project $PROJECT_ID

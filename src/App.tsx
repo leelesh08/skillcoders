@@ -15,6 +15,7 @@ import Gadgets from "./pages/Gadgets";
 import Meetings from "./pages/Meetings";
 import InstructorApply from "./pages/InstructorApply";
 import NotFound from "./pages/NotFound";
+import AdminUsers from "./pages/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/gadgets" element={<Gadgets />} />
           <Route path="/meetings" element={<Meetings />} />
           <Route path="/instructor-apply" element={<InstructorApply />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

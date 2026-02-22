@@ -1,92 +1,66 @@
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Search, Filter, Clock, Users, Star, Play, BookOpen } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
 import Navbar from '@/components/Navbar';
- import Footer from '@/components/Footer';
+import Footer from '@/components/Footer';
 import GlowCard from '@/components/GlowCard';
 import GlowText from '@/components/GlowText';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
-const courses = [
-  {
-    id: 1,
-    title: 'Ethical Hacking Masterclass',
-    instructor: 'Alex Security',
-    rating: 4.9,
-    students: 12450,
-    duration: '42 hours',
-    price: 4999,
-    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=250&fit=crop',
-    level: 'Advanced',
-    category: 'Penetration Testing',
-  },
-  {
-    id: 2,
-    title: 'Web Application Security',
-    instructor: 'Sarah White',
-    rating: 4.8,
-    students: 8920,
-    duration: '36 hours',
-    price: 3999,
-    image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&h=250&fit=crop',
-    level: 'Intermediate',
-    category: 'Web Security',
-  },
-  {
-    id: 3,
-    title: 'Network Security Fundamentals',
-    instructor: 'Mike Chen',
-    rating: 4.7,
-    students: 15670,
-    duration: '28 hours',
-    price: 2499,
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=250&fit=crop',
-    level: 'Beginner',
-    category: 'Network Security',
-  },
-  {
-    id: 4,
-    title: 'Malware Analysis & Reverse Engineering',
-    instructor: 'David Black',
-    rating: 4.9,
-    students: 6340,
-    duration: '48 hours',
-    price: 5999,
-    image: 'https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=400&h=250&fit=crop',
-    level: 'Expert',
-    category: 'Malware Analysis',
-  },
-  {
-    id: 5,
-    title: 'Bug Bounty Hunting',
-    instructor: 'Lisa Hunt',
-    rating: 4.8,
-    students: 9870,
-    duration: '32 hours',
-    price: 3499,
-    image: 'https://images.unsplash.com/photo-1563206767-5b18f218e8de?w=400&h=250&fit=crop',
-    level: 'Intermediate',
-    category: 'Bug Bounty',
-  },
-  {
-    id: 6,
-    title: 'Cloud Security (AWS/Azure)',
-    instructor: 'John Cloud',
-    rating: 4.6,
-    students: 7230,
-    duration: '40 hours',
-    price: 4499,
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=250&fit=crop',
-    level: 'Advanced',
-    category: 'Cloud Security',
-  },
-];
+import { api } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
+import Loading from '@/components/ui/Loading';
+import ErrorMessage from '@/components/ui/ErrorMessage';
+
+type Course = {
+  id: string | number;
+  title: string;
+  instructor?: string;
+  rating?: number;
+  students?: number;
+  duration?: string;
+  price?: number;
+  image?: string;
+  level?: string;
+  category?: string;
+};
+
+const Courses = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    api
+      .get('/courses')
+      .then((data: any) => {
+        if (!mounted) return;
+        setCourses(Array.isArray(data) ? data : []);
+      })
+      .catch((err: any) => {
+        if (!mounted) return;
+        setError(err?.message || String(err));
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
 const categories = ['All', 'Penetration Testing', 'Web Security', 'Network Security', 'Malware Analysis', 'Bug Bounty', 'Cloud Security'];
 
-const Courses = () => {
+  if (loading) return <Loading message="Loading courses..." />;
+  if (error) return <ErrorMessage message={error} />;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />
@@ -155,8 +129,21 @@ const Courses = () => {
           </motion.div>
 
           {/* Course Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course, index) => (
+          {loading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i}>
+                  <Skeleton className="h-48 w-full rounded-lg" />
+                  <Skeleton className="h-6 mt-3 w-3/4" />
+                  <Skeleton className="h-4 mt-2 w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500">{error}</div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {courses.map((course, index) => (
               <motion.div
                 key={course.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -166,7 +153,7 @@ const Courses = () => {
                 <GlowCard className="p-0 overflow-hidden" glowColor="blue">
                   <div className="relative">
                     <img
-                      src={course.image}
+                      src={course.image ?? ''}
                       alt={course.title}
                       className="w-full h-48 object-cover"
                     />
@@ -189,20 +176,20 @@ const Courses = () => {
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                       <span className="flex items-center gap-1">
                         <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
-                        {course.rating}
+                        {course.rating ?? '-'}
                       </span>
                       <span className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
-                        {course.students.toLocaleString()}
+                        {(course.students ?? 0).toLocaleString()}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
-                        {course.duration}
+                        {course.duration ?? '-'}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <span className="text-xl font-bold text-primary">₹{course.price.toLocaleString()}</span>
+                      <span className="text-xl font-bold text-primary">₹{(course.price ?? 0).toLocaleString()}</span>
                       <Button size="sm" className="bg-primary hover:bg-primary/90">
                         Enroll Now
                       </Button>
@@ -214,7 +201,7 @@ const Courses = () => {
           </div>
         </div>
       </main>
-     <Footer />
+      <Footer />
     </div>
   );
 };

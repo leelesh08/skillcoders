@@ -1,9 +1,11 @@
- import { useState } from 'react';
- import { Link, useLocation } from 'react-router-dom';
- import { motion, AnimatePresence } from 'framer-motion';
- import { Menu, X } from 'lucide-react';
- import { Button } from '@/components/ui/button';
- import scLogo from '@/assets/sc_logo.png';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import scLogo from '@/assets/sc_logo.png';
+import { auth } from '@/lib/firebase';
+import { onIdTokenChanged, getIdTokenResult } from 'firebase/auth';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -18,7 +20,39 @@ const navLinks = [
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    let mounted = true;
+
+    const unsub = onIdTokenChanged(auth, async (user) => {
+      if (!user) {
+        if (mounted) setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const tokenResult = await getIdTokenResult(user);
+        const claims = tokenResult.claims;
+        
+        // Robust check for admin via custom claim or roles array
+        const hasAdminAccess = !!(
+          claims.admin || 
+          (Array.isArray(claims.roles) && claims.roles.includes('admin'))
+        );
+
+        if (mounted) setIsAdmin(hasAdminAccess);
+      } catch (e) {
+        if (mounted) setIsAdmin(false);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      unsub();
+    };
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border">
@@ -64,6 +98,20 @@ const Navbar = () => {
                 </motion.div>
               </Link>
             ))}
+            
+            {isAdmin && (
+              <Link to="/admin/users">
+                <motion.div
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === '/admin/users' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Admin
+                </motion.div>
+              </Link>
+            )}
           </div>
 
           {/* Auth Buttons */}
@@ -74,7 +122,7 @@ const Navbar = () => {
               </Button>
             </Link>
             <Link to="/register">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground glow-box">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Get Started
               </Button>
             </Link>
@@ -84,6 +132,7 @@ const Navbar = () => {
           <button
             className="lg:hidden p-2 text-foreground"
             onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -97,7 +146,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border"
+            className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-border overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4 space-y-2">
               {navLinks.map((link, index) => (
@@ -120,6 +169,25 @@ const Navbar = () => {
                   </Link>
                 </motion.div>
               ))}
+
+              {/* Added Admin Link for Mobile */}
+              {isAdmin && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                >
+                  <Link
+                    to="/admin/users"
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === '/admin/users' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+                    }`}
+                  >
+                    Admin Panel
+                  </Link>
+                </motion.div>
+              )}
+
               <div className="pt-4 space-y-2 border-t border-border">
                 <Link to="/login" onClick={() => setIsOpen(false)}>
                   <Button variant="ghost" className="w-full justify-start">
@@ -139,5 +207,4 @@ const Navbar = () => {
     </nav>
   );
 };
-
 export default Navbar;

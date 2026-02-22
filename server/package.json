@@ -1,0 +1,26 @@
+{
+  "name": "skillcoders-backend",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest --runInBand"
+  },
+  "bin": {
+    "set-claims": "./cli/setClaims.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.10.0",
+    "googleapis": "^131.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22",
+    "jest": "^29.7.0",
+    "supertest": "^6.4.0"
+  }
+}

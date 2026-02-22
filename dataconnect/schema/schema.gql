@@ -1,0 +1,59 @@
+type User @table {
+  username: String!
+  email: String!
+  passwordHash: String!
+  createdAt: Timestamp!
+  displayName: String
+  profilePictureUrl: String
+  userType: String
+}
+
+type Project @table {
+  owner: User!
+  name: String!
+  createdAt: Timestamp!
+  description: String
+  dueDate: Date
+  status: String
+  visibility: String
+}
+
+type Task @table {
+  creator: User!
+  project: Project
+  title: String!
+  createdAt: Timestamp!
+  description: String
+  dueDate: Date
+  priority: String
+  status: String
+  assignedTo: User
+}
+
+type Note @table {
+  author: User!
+  title: String!
+  content: String!
+  createdAt: Timestamp!
+  tags: [String]
+  lastModifiedAt: Timestamp
+}
+
+type LearningModule @table {
+  title: String!
+  description: String!
+  createdAt: Timestamp!
+  category: String
+  difficultyLevel: String
+  estimatedCompletionTime: String
+}
+
+type UserLearningProgress @table(key: ["user", "learningModule"]) {
+  user: User!
+  learningModule: LearningModule!
+  status: String!
+  createdAt: Timestamp!
+  lastAccessedAt: Timestamp
+  completionDate: Timestamp
+  score: Int
+}

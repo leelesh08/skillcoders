@@ -1,6 +1,11 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
  import { Code, Terminal, Users, Trophy, Zap, BookOpen, Target, ArrowRight, Play, Star, Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { api } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
+import Loading from '@/components/ui/Loading';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import ParticleBackground from '@/components/ParticleBackground';
 import Navbar from '@/components/Navbar';
  import Footer from '@/components/Footer';
@@ -9,7 +14,7 @@ import GlowButton from '@/components/GlowButton';
 import GlowCard from '@/components/GlowCard';
 import GlowText from '@/components/GlowText';
 
-const features = [
+const featuresConst = [
   {
     icon: Terminal,
     title: 'Hands-on Labs',
@@ -36,7 +41,7 @@ const features = [
   },
 ];
 
-const stats = [
+const statsConst = [
   { value: '10K+', label: 'Students' },
   { value: '500+', label: 'Courses' },
   { value: '50+', label: 'Instructors' },
@@ -44,6 +49,35 @@ const stats = [
 ];
 
 const Index = () => {
+  const [features, setFeatures] = useState(featuresConst);
+  const [stats, setStats] = useState(statsConst);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    Promise.all([api.get('/features').catch(() => null), api.get('/stats').catch(() => null)])
+      .then(([f, s]) => {
+        if (!mounted) return;
+        if (Array.isArray(f)) setFeatures(f);
+        if (Array.isArray(s)) setStats(s);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err?.message || String(err));
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <Loading message="Loading homepage..." />;
+  if (error) return <ErrorMessage message={error} />;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />

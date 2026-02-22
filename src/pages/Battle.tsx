@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Swords, Users, Trophy, Clock, Shield, Play, IndianRupee } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
@@ -11,6 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
+import { api } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
+import Loading from '@/components/ui/Loading';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface BattleData {
@@ -25,7 +29,7 @@ interface BattleData {
   status: string;
 }
 
-const activeBattles: BattleData[] = [
+const activeBattlesConst: BattleData[] = [
   {
     id: 1,
     title: 'Web App Siege',
@@ -50,7 +54,7 @@ const activeBattles: BattleData[] = [
   },
 ];
 
-const upcomingBattles = [
+const upcomingBattlesConst = [
   {
     id: 3,
     title: 'CTF Championship',
@@ -77,6 +81,34 @@ const Battle = () => {
   const [bidAmount, setBidAmount] = useState(50);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [selectedBattle, setSelectedBattle] = useState<BattleData | null>(null);
+  const [activeBattles, setActiveBattles] = useState<BattleData[]>(activeBattlesConst);
+  const [upcomingBattles, setUpcomingBattles] = useState(upcomingBattlesConst);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    Promise.all([api.get('/battles/active').catch(() => null), api.get('/battles/upcoming').catch(() => null)])
+      .then(([active, upcoming]) => {
+        if (!mounted) return;
+        if (Array.isArray(active)) setActiveBattles(active);
+        if (Array.isArray(upcoming)) setUpcomingBattles(upcoming);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err?.message || String(err));
+      })
+      .finally(() => {
+        if (!mounted) return;
+        setLoading(false);
+      });
+
+    return () => { mounted = false; };
+  }, []);
+
+  if (loading) return <Loading message="Loading battles..." />;
+  if (error) return <ErrorMessage message={error} />;
 
   const handleSelectTeam = (battleId: number, team: 'red' | 'blue') => {
     setSelectedTeams(prev => ({
@@ -140,7 +172,17 @@ const Battle = () => {
             </h2>
             
             <div className="grid lg:grid-cols-2 gap-6">
-              {activeBattles.map((battle, index) => (
+              {loading ? (
+                <></>
+              ) : null}
+              {loading ? (
+                Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i}><Skeleton className="h-48 w-full rounded-lg" /></div>
+                ))
+              ) : error ? (
+                <div className="text-red-500">{error}</div>
+              ) : (
+                activeBattles.map((battle, index) => (
                 <motion.div
                   key={battle.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -277,7 +319,14 @@ const Battle = () => {
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              {upcomingBattles.map((battle, index) => (
+              {loading ? (
+                Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i}><Skeleton className="h-40 w-full rounded-lg" /></div>
+                ))
+              ) : error ? (
+                <div className="text-red-500">{error}</div>
+              ) : (
+                upcomingBattles.map((battle, index) => (
                 <motion.div
                   key={battle.id}
                   initial={{ opacity: 0, y: 30 }}

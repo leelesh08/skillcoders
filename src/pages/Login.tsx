@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
+import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const socialProviders = [
   {
@@ -61,10 +63,38 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle login logic
-    console.log('Login submitted:', { email, password });
+    setError(null);
+    setLoading(true);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await cred.user.getIdToken();
+
+      const apiUrl = import.meta.env.VITE_API_URL ?? '';
+      const resp = await fetch(`${apiUrl}/verifyToken`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body?.error || `Verification failed: ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      console.log('Verified token:', data);
+      navigate('/');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -217,12 +247,14 @@ const Login = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.7 }}
               >
-                <GlowButton variant="primary" size="lg" className="w-full">
+                <GlowButton type="submit" variant="primary" size="lg" className="w-full">
                   <span className="flex items-center justify-center gap-2">
                     Sign In
                     <ArrowRight className="w-5 h-5" />
                   </span>
                 </GlowButton>
+                {error && <p className="text-sm text-destructive mt-2">{error}</p>}
+                {loading && <p className="text-sm text-muted-foreground mt-2">Signing in…</p>}
               </motion.div>
             </form>
 

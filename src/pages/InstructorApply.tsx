@@ -16,6 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { api } from '@/lib/api';
 
 const expertiseOptions = [
   'Ethical Hacking', 'Web Security', 'Network Security', 'Cloud Security',
@@ -92,12 +93,21 @@ const InstructorApply = () => {
   };
 
   const handleSubmit = () => {
-    console.log('Instructor application:', formData);
-    toast({
-      title: '🎉 Application Submitted!',
-      description: 'Our team will review your application and contact you within 48 hours.',
-    });
-    navigate('/career');
+    // submit to backend
+    api.post('/instructor-applications', formData)
+      .then(() => {
+        toast({
+          title: '🎉 Application Submitted!',
+          description: 'Our team will review your application and contact you within 48 hours.',
+        });
+        navigate('/career');
+      })
+      .catch((err) => {
+        toast({
+          title: 'Submission Failed',
+          description: err?.message || 'Unable to submit application. Please try again later.',
+        });
+      });
   };
 
   const stepInfo = [

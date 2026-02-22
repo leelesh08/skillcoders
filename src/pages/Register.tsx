@@ -127,7 +127,7 @@ const Register = () => {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="John Doe"
+                    placeholder="pandu prem"
                     className="pl-10 bg-background/50 border-border focus:border-primary"
                   />
                 </div>
