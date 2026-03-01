@@ -6,7 +6,6 @@ import Loading from '@/components/ui/Loading';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import GlowText from '@/components/GlowText';
 import { api } from '@/lib/api';
-import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 
 const CheckoutStatus = () => {
   const [search] = useSearchParams();
@@ -19,8 +18,11 @@ const CheckoutStatus = () => {
   const [details, setDetails] = useState<any>(null);
   const [downloading, setDownloading] = useState(false);
 
-  // PDF helpers: create invoices with basic logo/header and multi-page support
+  // PDF helpers: dynamically import pdf-lib only when needed
   const generatePdfFromOrder = async (orderData: any) => {
+    // Only load pdf-lib when user actually needs to generate a PDF
+    const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
+    
     const pdfDoc = await PDFDocument.create();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const pageSize = [595, 842]; // A4-ish
@@ -74,6 +76,9 @@ const CheckoutStatus = () => {
   };
 
   const generatePdfFromSession = async (receipt: any) => {
+    // Only load pdf-lib when user actually needs to generate a PDF
+    const { PDFDocument, StandardFonts, rgb } = await import('pdf-lib');
+    
     const pdfDoc = await PDFDocument.create();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const page = pdfDoc.addPage([595, 842]);
