@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, onIdTokenChanged, getIdTokenResult } from '@/lib/firebase';
+import { subscribeToAuthChanges, getIdTokenResult } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -38,7 +38,7 @@ const AdminUsers = () => {
 
   useEffect(() => {
     let mounted = true;
-    const unsub = onIdTokenChanged(auth, async (user) => {
+    const unsub = subscribeToAuthChanges(async (user) => {
       if (!mounted) return;
       if (!user) {
         navigate('/');
@@ -186,7 +186,7 @@ const AdminUsers = () => {
                     if (!uid) throw new Error('UID required');
                     let claims: unknown = {};
                     try { claims = JSON.parse(claimsText); } catch (e) { throw new Error('Claims must be valid JSON'); }
-                    const headers: Record<string,string> = {};
+                    const headers: Record<string, string> = {};
                     if (adminKey) headers['x-admin-action-key'] = adminKey;
                     const res = await api.post(`/admin/users/${encodeURIComponent(uid)}/claims`, { claims, reason }, { headers }) as unknown;
                     setResult(JSON.stringify(res, null, 2));

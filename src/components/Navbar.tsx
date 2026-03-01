@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart } from 'lucide-react';
 import scLogo from '@/assets/sc_logo.png';
-import { auth, onIdTokenChanged, getIdTokenResult } from '@/lib/firebase';
+import { subscribeToAuthChanges, getIdTokenResult } from '@/lib/firebase';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -28,7 +28,7 @@ const Navbar = () => {
   useEffect(() => {
     let mounted = true;
 
-    const unsub = onIdTokenChanged(auth, async (user) => {
+    const unsub = subscribeToAuthChanges(async (user) => {
       if (!user) {
         if (mounted) setIsAdmin(false);
         return;
@@ -37,10 +37,10 @@ const Navbar = () => {
       try {
         const tokenResult = await getIdTokenResult(user);
         const claims = tokenResult.claims;
-        
+
         // Robust check for admin via custom claim or roles array
         const hasAdminAccess = !!(
-          claims.admin || 
+          claims.admin ||
           (Array.isArray(claims.roles) && claims.roles.includes('admin'))
         );
 
@@ -62,17 +62,17 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-             <motion.img
-               src={scLogo}
-               alt="SkillCoders"
-               className="h-10 w-auto"
-               whileHover={{ scale: 1.1 }}
-               transition={{ duration: 0.3 }}
-             />
-             <span className="text-xl font-bold">
-               <span className="text-primary">Skill</span>
-               <span className="text-secondary">Coders</span>
-             </span>
+            <motion.img
+              src={scLogo}
+              alt="SkillCoders"
+              className="h-10 w-auto"
+              whileHover={{ scale: 1.1 }}
+              transition={{ duration: 0.3 }}
+            />
+            <span className="text-xl font-bold">
+              <span className="text-primary">Skill</span>
+              <span className="text-secondary">Coders</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -80,11 +80,10 @@ const Navbar = () => {
             {navLinks.map((link) => (
               <Link key={link.path} to={link.path}>
                 <motion.div
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors relative ${
-                    location.pathname === link.path
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors relative ${location.pathname === link.path
                       ? 'text-primary'
                       : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -100,13 +99,12 @@ const Navbar = () => {
                 </motion.div>
               </Link>
             ))}
-            
+
             {isAdmin && (
               <Link to="/admin/users">
                 <motion.div
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === '/admin/users' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/admin/users' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -117,9 +115,8 @@ const Navbar = () => {
             {isAdmin && (
               <Link to="/admin/audits">
                 <motion.div
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    location.pathname === '/admin/audits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/admin/audits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                    }`}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -181,11 +178,10 @@ const Navbar = () => {
                   <Link
                     to={link.path}
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === link.path
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${location.pathname === link.path
                         ? 'bg-primary/10 text-primary'
                         : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                    }`}
+                      }`}
                   >
                     {link.name}
                   </Link>
@@ -201,9 +197,8 @@ const Navbar = () => {
                   <Link
                     to="/admin/users"
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === '/admin/users' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
-                    }`}
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/admin/users' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+                      }`}
                   >
                     Admin Panel
                   </Link>
@@ -217,9 +212,8 @@ const Navbar = () => {
                   <Link
                     to="/admin/audits"
                     onClick={() => setIsOpen(false)}
-                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === '/admin/audits' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
-                    }`}
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/admin/audits' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+                      }`}
                   >
                     Audits
                   </Link>

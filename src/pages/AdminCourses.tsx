@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, onIdTokenChanged, getIdTokenResult } from '@/lib/firebase';
+import { subscribeToAuthChanges, getIdTokenResult } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
@@ -34,7 +34,7 @@ const AdminCourses = () => {
 
   useEffect(() => {
     let mounted = true;
-    const unsub = onIdTokenChanged(auth, async (user) => {
+    const unsub = subscribeToAuthChanges(async (user) => {
       if (!mounted) return;
       if (!user) {
         navigate('/');

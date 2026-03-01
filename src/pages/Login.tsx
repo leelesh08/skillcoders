@@ -9,12 +9,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
-import { auth, signInWithGooglePopup, signInWithGoogleRedirect, signInWithGithubPopup, signInWithGithubRedirect, signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, type ConfirmationResult } from '@/lib/firebase';
+import {
+  signInWithGooglePopup,
+  signInWithGithubPopup,
+  signInWithEmailAndPassword,
+  signInWithPhoneNumber,
+  createRecaptchaVerifier,
+  type ConfirmationResult,
+} from '@/lib/firebase';
 
 // Type declaration for recaptchaVerifier on window
 declare global {
   interface Window {
-    recaptchaVerifier?: RecaptchaVerifier;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recaptchaVerifier?: any;
   }
 }
 
@@ -84,7 +92,7 @@ const Login = () => {
 
     if (authMethod === 'email') {
       try {
-        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const cred = await signInWithEmailAndPassword(email, password);
         const idToken = await cred.user.getIdToken();
 
         const apiUrl = import.meta.env.VITE_API_URL ?? '';
@@ -120,18 +128,18 @@ const Login = () => {
       try {
         // Setup reCAPTCHA verifier
         if (!window.recaptchaVerifier) {
-          window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible',
-            'callback': (response: string) => {
+          window.recaptchaVerifier = await createRecaptchaVerifier('recaptcha-container', {
+            size: 'invisible',
+            callback: (response: string) => {
               console.log('reCAPTCHA verified:', response);
-            }
+            },
           });
         }
 
         const appVerifier = window.recaptchaVerifier;
         const phoneNumber = phone.startsWith('+') ? phone : '+91' + phone;
 
-        const confirmation = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+        const confirmation = await signInWithPhoneNumber(phoneNumber, appVerifier);
         setConfirmationResult(confirmation);
         setVerificationStep(true);
         setError(null);
@@ -197,6 +205,7 @@ const Login = () => {
     setError(null);
     setLoading(true);
     try {
+      // Popup → redirect fallback is handled inside signInWithGooglePopup()
       const cred = await signInWithGooglePopup();
       const idToken = await cred.user.getIdToken();
 
@@ -217,17 +226,6 @@ const Login = () => {
       navigate('/');
     } catch (err: unknown) {
       console.error('Google sign-in error', err);
-      const code = (err as { code?: string })?.code;
-      // If popup was cancelled, blocked, or not supported, fallback to redirect flow
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user' || code === 'auth/popup-blocked' || code === 'auth/web-storage-unsupported') {
-        try {
-          console.log('Popup blocked or unsupported, using redirect flow...');
-          await signInWithGoogleRedirect();
-          return; // redirect will occur
-        } catch (e2) {
-          console.error('Redirect fallback failed', e2);
-        }
-      }
       let msg = 'Google sign-in failed';
       if (err && typeof err === 'object' && 'message' in err) {
         const m = (err as { message?: unknown }).message;
@@ -245,6 +243,7 @@ const Login = () => {
     setError(null);
     setLoading(true);
     try {
+      // Popup → redirect fallback is handled inside signInWithGithubPopup()
       const cred = await signInWithGithubPopup();
       const idToken = await cred.user.getIdToken();
 
@@ -265,15 +264,6 @@ const Login = () => {
       navigate('/');
     } catch (err: unknown) {
       console.error('GitHub sign-in error', err);
-      const code = (err as { code?: string })?.code;
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user' || code === 'auth/popup-blocked' || code === 'auth/web-storage-unsupported') {
-        try {
-          await signInWithGithubRedirect();
-          return;
-        } catch (e2) {
-          console.error('GitHub redirect fallback failed', e2);
-        }
-      }
       let msg = 'GitHub sign-in failed';
       if (err && typeof err === 'object' && 'message' in err) {
         const m = (err as { message?: unknown }).message;
@@ -378,8 +368,8 @@ const Login = () => {
                   setOtp('');
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'email'
-                    ? 'bg-primary/20 text-primary font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-primary/20 text-primary font-medium'
+                  : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 <Mail className="w-4 h-4" />
@@ -395,8 +385,8 @@ const Login = () => {
                   setError(null);
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'phone'
-                    ? 'bg-primary/20 text-primary font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-primary/20 text-primary font-medium'
+                  : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 <Phone className="w-4 h-4" />

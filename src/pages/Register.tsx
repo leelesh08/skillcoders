@@ -8,12 +8,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
-import { auth, signInWithGooglePopup, signInWithGoogleRedirect, createUserWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, type ConfirmationResult } from '@/lib/firebase';
+import {
+  signInWithGooglePopup,
+  createUserWithEmailAndPassword,
+  signInWithPhoneNumber,
+  createRecaptchaVerifier,
+  type ConfirmationResult,
+} from '@/lib/firebase';
 
 // Type declaration for recaptchaVerifier on window
 declare global {
   interface Window {
-    recaptchaVerifier?: RecaptchaVerifier;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recaptchaVerifier?: any;
   }
 }
 
@@ -62,7 +69,7 @@ const Register = () => {
   const [verificationStep, setVerificationStep] = useState(false);
   const [otp, setOtp] = useState('');
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -75,10 +82,10 @@ const Register = () => {
     e.preventDefault();
     setError(null);
     setLoading(true);
-    
+
     if (authMethod === 'email') {
       try {
-        const cred = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+        const cred = await createUserWithEmailAndPassword(formData.email, formData.password);
         const idToken = await cred.user.getIdToken();
 
         const apiUrl = import.meta.env.VITE_API_URL ?? '';
@@ -114,18 +121,18 @@ const Register = () => {
       try {
         // Setup reCAPTCHA verifier
         if (!window.recaptchaVerifier) {
-          window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-            'size': 'invisible',
-            'callback': (response: string) => {
+          window.recaptchaVerifier = await createRecaptchaVerifier('recaptcha-container', {
+            size: 'invisible',
+            callback: (response: string) => {
               console.log('reCAPTCHA verified:', response);
-            }
+            },
           });
         }
 
         const appVerifier = window.recaptchaVerifier;
         const phoneNumber = formData.phone.startsWith('+') ? formData.phone : '+91' + formData.phone;
-        
-        const confirmation = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+
+        const confirmation = await signInWithPhoneNumber(phoneNumber, appVerifier);
         setConfirmationResult(confirmation);
         setVerificationStep(true);
         setError(null);
@@ -192,6 +199,7 @@ const Register = () => {
     setError(null);
     setLoading(true);
     try {
+      // Popup → redirect fallback handled inside signInWithGooglePopup()
       const cred = await signInWithGooglePopup();
       const idToken = await cred.user.getIdToken();
 
@@ -212,17 +220,6 @@ const Register = () => {
       navigate('/');
     } catch (err: unknown) {
       console.error('Google sign-up error', err);
-      const code = (err as { code?: string })?.code;
-      // If popup was cancelled, blocked, or not supported, fallback to redirect flow
-      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user' || code === 'auth/popup-blocked' || code === 'auth/web-storage-unsupported') {
-        try {
-          console.log('Popup blocked or unsupported, using redirect flow...');
-          await signInWithGoogleRedirect();
-          return; // redirect will occur
-        } catch (e2) {
-          console.error('Redirect fallback failed', e2);
-        }
-      }
       let msg = 'Google sign-up failed';
       if (err && typeof err === 'object' && 'message' in err) {
         const m = (err as { message?: unknown }).message;
@@ -232,7 +229,7 @@ const Register = () => {
       }
       setError(msg);
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 
@@ -327,11 +324,10 @@ const Register = () => {
                   setVerificationStep(true);
                   setOtp('');
                 }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${
-                  authMethod === 'email'
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'email'
                     ? 'bg-primary/20 text-primary font-medium'
                     : 'text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 <Mail className="w-4 h-4" />
                 Email
@@ -343,11 +339,10 @@ const Register = () => {
                   setVerificationStep(true);
                   setOtp('');
                 }}
-                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${
-                  authMethod === 'phone'
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'phone'
                     ? 'bg-primary/20 text-primary font-medium'
                     : 'text-muted-foreground hover:text-foreground'
-                }`}
+                  }`}
               >
                 <Phone className="w-4 h-4" />
                 Phone
@@ -482,36 +477,30 @@ const Register = () => {
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, role: 'student' })}
-                      className={`p-3 rounded-xl border-2 transition-all duration-300 ${
-                        formData.role === 'student'
+                      className={`p-3 rounded-xl border-2 transition-all duration-300 ${formData.role === 'student'
                           ? 'border-primary bg-primary/10'
                           : 'border-border hover:border-primary/50'
-                      }`}
+                        }`}
                     >
-                      <GraduationCap className={`w-6 h-6 mx-auto mb-1 ${
-                        formData.role === 'student' ? 'text-primary' : 'text-muted-foreground'
-                      }`} />
-                      <span className={`font-medium text-sm ${
-                        formData.role === 'student' ? 'text-primary' : 'text-muted-foreground'
-                      }`}>
+                      <GraduationCap className={`w-6 h-6 mx-auto mb-1 ${formData.role === 'student' ? 'text-primary' : 'text-muted-foreground'
+                        }`} />
+                      <span className={`font-medium text-sm ${formData.role === 'student' ? 'text-primary' : 'text-muted-foreground'
+                        }`}>
                         Student
                       </span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setFormData({ ...formData, role: 'instructor' })}
-                      className={`p-3 rounded-xl border-2 transition-all duration-300 ${
-                        formData.role === 'instructor'
+                      className={`p-3 rounded-xl border-2 transition-all duration-300 ${formData.role === 'instructor'
                           ? 'border-secondary bg-secondary/10'
                           : 'border-border hover:border-secondary/50'
-                      }`}
+                        }`}
                     >
-                      <Briefcase className={`w-6 h-6 mx-auto mb-1 ${
-                        formData.role === 'instructor' ? 'text-secondary' : 'text-muted-foreground'
-                      }`} />
-                      <span className={`font-medium text-sm ${
-                        formData.role === 'instructor' ? 'text-secondary' : 'text-muted-foreground'
-                      }`}>
+                      <Briefcase className={`w-6 h-6 mx-auto mb-1 ${formData.role === 'instructor' ? 'text-secondary' : 'text-muted-foreground'
+                        }`} />
+                      <span className={`font-medium text-sm ${formData.role === 'instructor' ? 'text-secondary' : 'text-muted-foreground'
+                        }`}>
                         Instructor
                       </span>
                     </button>
@@ -542,9 +531,9 @@ const Register = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: authMethod === 'email' ? 0.8 : 0.7 }}
                   >
-                    <GlowButton 
-                      variant={formData.role === 'instructor' ? 'secondary' : 'primary'} 
-                      size="lg" 
+                    <GlowButton
+                      variant={formData.role === 'instructor' ? 'secondary' : 'primary'}
+                      size="lg"
                       className="w-full"
                       disabled={loading}
                       type="submit"
@@ -596,9 +585,9 @@ const Register = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                   >
-                    <GlowButton 
-                      variant="primary" 
-                      size="lg" 
+                    <GlowButton
+                      variant="primary"
+                      size="lg"
                       className="w-full"
                       disabled={loading || otp.length !== 6}
                       type="submit"

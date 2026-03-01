@@ -1,28 +1,55 @@
-import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from "./firebase";
-import { collection, addDoc, getDocs, query, where, type WhereFilterOp } from "firebase/firestore";
+// ─────────────────────────────────────────────────────────────────────────────
+// firebase-example.ts — helper utilities using the lazy firebase wrappers
+//
+// auth and db are NOT imported statically here — they are resolved lazily via
+// getDbInstance() / the auth helper functions to keep the bundle light.
+// ─────────────────────────────────────────────────────────────────────────────
 
-// Auth helpers
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  getDbInstance,
+} from "./firebase";
+
+import type { WhereFilterOp } from "firebase/firestore";
+
+// ── Auth helpers ──────────────────────────────────────────────────────────────
+
 export async function signIn(email: string, password: string) {
-  return signInWithEmailAndPassword(auth, email, password);
+  return signInWithEmailAndPassword(email, password);
 }
 
 export async function signUp(email: string, password: string) {
-  return createUserWithEmailAndPassword(auth, email, password);
+  return createUserWithEmailAndPassword(email, password);
 }
 
-export async function signOut() {
-  return firebaseSignOut(auth);
+export async function logOut() {
+  return signOut();
 }
 
-// Firestore helpers (simple examples)
-export async function addDocument(collectionName: string, data: Record<string, unknown>) {
-  const col = collection(db, collectionName);
-  return addDoc(col, data);
+// ── Firestore helpers (lazy — firebase/firestore loads on first call) ─────────
+
+export async function addDocument(
+  collectionName: string,
+  data: Record<string, unknown>
+) {
+  const db = await getDbInstance();
+  const { collection, addDoc } = await import("firebase/firestore");
+  return addDoc(collection(db, collectionName), data);
 }
 
-export async function queryDocuments(collectionName: string, field: string, op: WhereFilterOp, value: unknown) {
-  const col = collection(db, collectionName);
-  const q = query(col, where(field, op, value as unknown));
+export async function queryDocuments(
+  collectionName: string,
+  field: string,
+  op: WhereFilterOp,
+  value: unknown
+) {
+  const db = await getDbInstance();
+  const { collection, query, where, getDocs } = await import(
+    "firebase/firestore"
+  );
+  const q = query(collection(db, collectionName), where(field, op, value));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

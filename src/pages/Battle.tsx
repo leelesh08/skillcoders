@@ -13,7 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { api } from '@/lib/api';
-import { auth } from '@/lib/firebase';
+import { getCurrentUser } from '@/lib/firebase';
 
 interface BattleData {
   id: number;
@@ -149,7 +149,7 @@ const Battle = () => {
       console.log(`Joining ${selectedBattle.title} as ${selectedTeams[selectedBattle.id]} team with bid ₹${bidAmount}`);
       // Attempt to notify backend and create checkout
       try {
-        const user = auth.currentUser;
+        const user = await getCurrentUser();
         const userId = user?.uid ?? 'anonymous';
         const email = user?.email;
         await api.post(`/battles/${selectedBattle.id}/join`, { userId, email }).catch(() => null);
@@ -225,7 +225,7 @@ const Battle = () => {
               {' Battle Arena'}
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Play online team-based cybersecurity battles, attack or defend, and win prizes. 
+              Play online team-based cybersecurity battles, attack or defend, and win prizes.
               Bid from ₹50 to ₹1,00,000 per battle!
             </p>
           </motion.div>
@@ -236,7 +236,7 @@ const Battle = () => {
               <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
               Battles
             </h2>
-            
+
             <div className="grid lg:grid-cols-2 gap-6">
               {battles.map((battle, index) => (
                 <motion.div
@@ -262,11 +262,10 @@ const Battle = () => {
                         <motion.div
                           whileHover={{ scale: 1.02 }}
                           onClick={() => handleSelectTeam(battle.id, 'red')}
-                          className={`p-4 rounded-xl cursor-pointer transition-all ${
-                            selectedTeams[battle.id] === 'red' 
-                              ? 'bg-destructive/20 border-2 border-destructive shadow-[0_0_20px_hsl(var(--destructive)/0.4)]' 
+                          className={`p-4 rounded-xl cursor-pointer transition-all ${selectedTeams[battle.id] === 'red'
+                              ? 'bg-destructive/20 border-2 border-destructive shadow-[0_0_20px_hsl(var(--destructive)/0.4)]'
                               : 'bg-destructive/10 border border-destructive/30 hover:border-destructive/60'
-                          }`}
+                            }`}
                         >
                           <div className="text-center">
                             <Shield className="w-8 h-8 text-destructive mx-auto mb-2" />
@@ -301,11 +300,10 @@ const Battle = () => {
                         <motion.div
                           whileHover={{ scale: 1.02 }}
                           onClick={() => handleSelectTeam(battle.id, 'blue')}
-                          className={`p-4 rounded-xl cursor-pointer transition-all ${
-                            selectedTeams[battle.id] === 'blue' 
-                              ? 'bg-primary/20 border-2 border-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)]' 
+                          className={`p-4 rounded-xl cursor-pointer transition-all ${selectedTeams[battle.id] === 'blue'
+                              ? 'bg-primary/20 border-2 border-primary shadow-[0_0_20px_hsl(var(--primary)/0.4)]'
                               : 'bg-primary/10 border border-primary/30 hover:border-primary/60'
-                          }`}
+                            }`}
                         >
                           <div className="text-center">
                             <Shield className="w-8 h-8 text-primary mx-auto mb-2" />
@@ -351,18 +349,18 @@ const Battle = () => {
                           </div>
                           {/* action buttons when participant has joined */}
                           {joinedOrders[battle.id].team === 'red' && (
-                            <GlowButton variant="outline" size="sm" onClick={() => { simulateAction(battle.id, 'attack'); const b = battles.find(b=>b.id===battle.id); if(b) checkForVictory(b); }}>
+                            <GlowButton variant="outline" size="sm" onClick={() => { simulateAction(battle.id, 'attack'); const b = battles.find(b => b.id === battle.id); if (b) checkForVictory(b); }}>
                               Attack
                             </GlowButton>
                           )}
                           {joinedOrders[battle.id].team === 'blue' && (
-                            <GlowButton variant="outline" size="sm" onClick={() => { simulateAction(battle.id, 'defend'); const b = battles.find(b=>b.id===battle.id); if(b) checkForVictory(b); }}>
+                            <GlowButton variant="outline" size="sm" onClick={() => { simulateAction(battle.id, 'defend'); const b = battles.find(b => b.id === battle.id); if (b) checkForVictory(b); }}>
                               Defend
                             </GlowButton>
                           )}
                         </div>
                       ) : (
-                        <GlowButton 
+                        <GlowButton
                           variant="primary"
                           onClick={() => handleJoinBattle(battle)}
                         >
@@ -382,7 +380,7 @@ const Battle = () => {
               <Clock className="w-6 h-6 text-primary" />
               Upcoming Battles
             </h2>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               {upcomingBattles.map((battle, index) => (
                 <motion.div
@@ -401,7 +399,7 @@ const Battle = () => {
                         Upcoming
                       </Badge>
                     </div>
-                    
+
                     <div className="space-y-3 mb-4">
                       <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Registered</span>
@@ -444,16 +442,15 @@ const Battle = () => {
                 {selectedBattle && selectedTeams[selectedBattle.id] && (
                   <div className="text-center space-y-2">
                     <p className="text-muted-foreground mb-2">You are joining as:</p>
-                    <Badge 
-                      className={`text-lg px-4 py-2 ${
-                        selectedTeams[selectedBattle.id] === 'red' 
-                          ? 'bg-destructive text-destructive-foreground' 
+                    <Badge
+                      className={`text-lg px-4 py-2 ${selectedTeams[selectedBattle.id] === 'red'
+                          ? 'bg-destructive text-destructive-foreground'
                           : 'bg-primary text-primary-foreground'
-                      }`}
+                        }`}
                     >
                       <Shield className="w-5 h-5 mr-2" />
-                      {selectedTeams[selectedBattle.id] === 'red' 
-                        ? selectedBattle.redTeam.name 
+                      {selectedTeams[selectedBattle.id] === 'red'
+                        ? selectedBattle.redTeam.name
                         : selectedBattle.blueTeam.name}
                     </Badge>
                     <input
@@ -474,7 +471,7 @@ const Battle = () => {
                     ₹{bidAmount.toLocaleString()}
                   </div>
                 </div>
-                
+
                 <div className="space-y-4">
                   <div className="flex justify-between text-sm text-muted-foreground">
                     <span>Min: ₹50</span>
