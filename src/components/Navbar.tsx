@@ -6,8 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { ShoppingCart } from 'lucide-react';
 import scLogo from '@/assets/sc_logo.png';
-import { auth } from '@/lib/firebase';
-import { onIdTokenChanged, getIdTokenResult } from 'firebase/auth';
+import { auth, onIdTokenChanged, getIdTokenResult } from '@/lib/firebase';
 
 const navLinks = [
   { name: 'Home', path: '/' },

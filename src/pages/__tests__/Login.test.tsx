@@ -7,8 +7,8 @@ import { vi } from 'vitest';
 let fetchMock: ReturnType<typeof vi.fn>;
 
 // Mock firebase auth and getIdToken
-vi.mock('@/lib/firebase', () => ({ auth: {} }));
-vi.mock('firebase/auth', () => ({
+vi.mock('@/lib/firebase', () => ({ 
+  auth: {},
   signInWithEmailAndPassword: vi.fn(async (auth, email, password) => ({
     user: { getIdToken: async () => 'fake-id-token' },
   })),

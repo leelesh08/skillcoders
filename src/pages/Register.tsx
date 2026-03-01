@@ -8,8 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
-import { auth, signInWithGooglePopup, signInWithGoogleRedirect } from '@/lib/firebase';
-import { createUserWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from 'firebase/auth';
+import { auth, signInWithGooglePopup, signInWithGoogleRedirect, createUserWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, type ConfirmationResult } from '@/lib/firebase';
 
 // Type declaration for recaptchaVerifier on window
 declare global {

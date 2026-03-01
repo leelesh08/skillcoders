@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '@/lib/firebase';
-import { onIdTokenChanged, getIdTokenResult } from 'firebase/auth';
+import { auth, onIdTokenChanged, getIdTokenResult } from '@/lib/firebase';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';

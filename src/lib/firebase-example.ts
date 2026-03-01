@@ -1,9 +1,4 @@
-import { auth, db } from "./firebase";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut as firebaseSignOut,
-} from "firebase/auth";
+import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as firebaseSignOut } from "./firebase";
 import { collection, addDoc, getDocs, query, where, type WhereFilterOp } from "firebase/firestore";
 
 // Auth helpers

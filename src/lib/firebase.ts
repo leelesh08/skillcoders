@@ -1,6 +1,20 @@
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  GithubAuthProvider, 
+  signInWithPopup, 
+  signInWithRedirect, 
+  signOut as firebaseSignOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  ConfirmationResult,
+  onIdTokenChanged,
+  getIdTokenResult,
+  type User
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
@@ -32,7 +46,6 @@ export function signOut() {
 export async function signInWithGoogleRedirect() {
   // use redirect as a fallback for environments where popups are blocked
   // this will navigate away from the app and return via Firebase redirect flow
-  const { signInWithRedirect } = await import('firebase/auth');
   return signInWithRedirect(auth, googleProvider);
 }
 
@@ -46,7 +59,6 @@ export async function signInWithGithubPopup() {
 }
 
 export async function signInWithGithubRedirect() {
-  const { signInWithRedirect } = await import('firebase/auth');
   return signInWithRedirect(auth, githubProvider);
 }
 
@@ -64,5 +76,16 @@ if (typeof window !== "undefined") {
 }
 
 export { analytics };
+
+// Export all Firebase Auth types and functions
+export type { User, ConfirmationResult };
+export { 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithPhoneNumber, 
+  RecaptchaVerifier,
+  onIdTokenChanged,
+  getIdTokenResult
+};
 
 export default app;

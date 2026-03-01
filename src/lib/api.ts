@@ -1,5 +1,4 @@
-import { auth } from './firebase';
-import type { User } from 'firebase/auth';
+import { auth, type User } from './firebase';
 
 async function getIdToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;

@@ -9,8 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
-import { auth, signInWithGooglePopup, signInWithGoogleRedirect, signInWithGithubPopup, signInWithGithubRedirect } from '@/lib/firebase';
-import { signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from 'firebase/auth';
+import { auth, signInWithGooglePopup, signInWithGoogleRedirect, signInWithGithubPopup, signInWithGithubRedirect, signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, type ConfirmationResult } from '@/lib/firebase';
 
 // Type declaration for recaptchaVerifier on window
 declare global {
