@@ -1,8 +1,8 @@
-import { auth, type User } from './firebase';
+import { getCurrentUser } from './firebase';
 
 async function getIdToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
-  const user = auth.currentUser as User | null;
+  const user = await getCurrentUser();
   if (!user) return null;
   try {
     return await user.getIdToken();
