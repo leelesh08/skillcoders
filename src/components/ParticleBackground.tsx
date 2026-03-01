@@ -125,8 +125,7 @@ const ParticleBackground = () => {
     <>
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{ background: 'transparent' }}
+        className="fixed inset-0 pointer-events-none z-0 bg-transparent"
       />
       {/* Cyber Shield Lines */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">

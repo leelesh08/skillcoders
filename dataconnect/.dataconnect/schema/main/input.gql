@@ -1,0 +1,2150 @@
+"""
+✨ `LearningModule_KeyOutput` returns the primary key fields of table type `LearningModule`.
+
+It has the same format as `LearningModule_Key`, but is only used as mutation return value.
+"""
+scalar LearningModule_KeyOutput
+"""
+✨ `Note_KeyOutput` returns the primary key fields of table type `Note`.
+
+It has the same format as `Note_Key`, but is only used as mutation return value.
+"""
+scalar Note_KeyOutput
+"""
+✨ `Project_KeyOutput` returns the primary key fields of table type `Project`.
+
+It has the same format as `Project_Key`, but is only used as mutation return value.
+"""
+scalar Project_KeyOutput
+"""
+✨ `Task_KeyOutput` returns the primary key fields of table type `Task`.
+
+It has the same format as `Task_Key`, but is only used as mutation return value.
+"""
+scalar Task_KeyOutput
+"""
+✨ `User_KeyOutput` returns the primary key fields of table type `User`.
+
+It has the same format as `User_Key`, but is only used as mutation return value.
+"""
+scalar User_KeyOutput
+"""
+✨ `UserLearningProgress_KeyOutput` returns the primary key fields of table type `UserLearningProgress`.
+
+It has the same format as `UserLearningProgress_Key`, but is only used as mutation return value.
+"""
+scalar UserLearningProgress_KeyOutput
+"""
+✨ Generated data input type for table 'LearningModule'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input LearningModule_Data {
+  """
+  ✨ Generated from Field `LearningModule`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `LearningModule`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `LearningModule`.`category` of type `String`
+  """
+  category: String
+  """
+  ✨ `_expr` server value variant of `category` (✨ Generated from Field `LearningModule`.`category` of type `String`)
+  """
+  category_expr: String_Expr
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `LearningModule`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `LearningModule`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `LearningModule`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `LearningModule`.`description` of type `String!`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `LearningModule`.`description` of type `String!`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `LearningModule`.`difficultyLevel` of type `String`
+  """
+  difficultyLevel: String
+  """
+  ✨ `_expr` server value variant of `difficultyLevel` (✨ Generated from Field `LearningModule`.`difficultyLevel` of type `String`)
+  """
+  difficultyLevel_expr: String_Expr
+  """
+  ✨ Generated from Field `LearningModule`.`estimatedCompletionTime` of type `String`
+  """
+  estimatedCompletionTime: String
+  """
+  ✨ `_expr` server value variant of `estimatedCompletionTime` (✨ Generated from Field `LearningModule`.`estimatedCompletionTime` of type `String`)
+  """
+  estimatedCompletionTime_expr: String_Expr
+  """
+  ✨ Generated from Field `LearningModule`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `LearningModule`.`title` of type `String!`)
+  """
+  title_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'LearningModule'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LearningModule_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [LearningModule_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: LearningModule_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [LearningModule_Filter!]
+  """
+  ✨ Generated from Field `LearningModule`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`category` of type `String`
+  """
+  category: String_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`description` of type `String!`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`difficultyLevel` of type `String`
+  """
+  difficultyLevel: String_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`estimatedCompletionTime` of type `String`
+  """
+  estimatedCompletionTime: String_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`title` of type `String!`
+  """
+  title: String_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`userLearningProgresses_on_learningModule` of type `[UserLearningProgress!]!`
+  """
+  userLearningProgresses_on_learningModule: UserLearningProgress_ListFilter
+  """
+  ✨ Generated from Field `LearningModule`.`users_via_UserLearningProgress` of type `[User!]!`
+  """
+  users_via_UserLearningProgress: User_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'LearningModule'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input LearningModule_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [LearningModule_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: LearningModule_Filter
+}
+"""
+✨ Generated having input type for table 'LearningModule'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input LearningModule_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [LearningModule_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: LearningModule_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [LearningModule_Having!]
+  """
+  ✨ Generated from Field `LearningModule`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`category_count` of type `Int!`
+  """
+  category_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`difficultyLevel_count` of type `Int!`
+  """
+  difficultyLevel_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`estimatedCompletionTime_count` of type `Int!`
+  """
+  estimatedCompletionTime_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'LearningModule'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input LearningModule_Key {
+  """
+  ✨ Generated from Field `LearningModule`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `LearningModule`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'LearningModule'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input LearningModule_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: LearningModule_Filter
+}
+"""
+✨ Generated order input type for table 'LearningModule'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input LearningModule_Order {
+  """
+  ✨ Generated from Field `LearningModule`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`category` of type `String`
+  """
+  category: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`description` of type `String!`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`difficultyLevel` of type `String`
+  """
+  difficultyLevel: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`estimatedCompletionTime` of type `String`
+  """
+  estimatedCompletionTime: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`category_count` of type `Int!`
+  """
+  category_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`difficultyLevel_count` of type `Int!`
+  """
+  difficultyLevel_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`estimatedCompletionTime_count` of type `Int!`
+  """
+  estimatedCompletionTime_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `LearningModule`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Note'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Note_Data {
+  """
+  ✨ Generated from Field `Note`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Note`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Note`.`authorId` of type `UUID!`
+  """
+  authorId: UUID
+  """
+  ✨ `_expr` server value variant of `authorId` (✨ Generated from Field `Note`.`authorId` of type `UUID!`)
+  """
+  authorId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Note`.`author` of type `User!`
+  """
+  author: User_Key
+  """
+  ✨ Generated from Field `Note`.`content` of type `String!`
+  """
+  content: String
+  """
+  ✨ `_expr` server value variant of `content` (✨ Generated from Field `Note`.`content` of type `String!`)
+  """
+  content_expr: String_Expr
+  """
+  ✨ Generated from Field `Note`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Note`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Note`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Note`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt` of type `Timestamp`
+  """
+  lastModifiedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `lastModifiedAt` (✨ Generated from Field `Note`.`lastModifiedAt` of type `Timestamp`)
+  """
+  lastModifiedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `lastModifiedAt` (✨ Generated from Field `Note`.`lastModifiedAt` of type `Timestamp`)
+  """
+  lastModifiedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `lastModifiedAt` (✨ Generated from Field `Note`.`lastModifiedAt` of type `Timestamp`)
+  """
+  lastModifiedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Note`.`tags` of type `[String]`
+  """
+  tags: [String!]
+  """
+  ✨ `_update` server value variant of `tags` (✨ Generated from Field `Note`.`tags` of type `[String]`)
+  """
+  tags_update: [String_ListUpdate!]
+  """
+  ✨ Generated from Field `Note`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Note`.`title` of type `String!`)
+  """
+  title_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Note'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Note_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Note_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Note_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Note_Filter!]
+  """
+  ✨ Generated from Field `Note`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Note`.`authorId` of type `UUID!`
+  """
+  authorId: UUID_Filter
+  """
+  ✨ Generated from Field `Note`.`author` of type `User!`
+  """
+  author: User_Filter
+  """
+  ✨ Generated from Field `Note`.`content` of type `String!`
+  """
+  content: String_Filter
+  """
+  ✨ Generated from Field `Note`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt` of type `Timestamp`
+  """
+  lastModifiedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Note`.`tags` of type `[String]`
+  """
+  tags: String_ListFilter
+  """
+  ✨ Generated from Field `Note`.`title` of type `String!`
+  """
+  title: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Note'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Note_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Note_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Note_Filter
+}
+"""
+✨ Generated having input type for table 'Note'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Note_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Note_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Note_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Note_Having!]
+  """
+  ✨ Generated from Field `Note`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`authorId_count` of type `Int!`
+  """
+  authorId_count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`content_count` of type `Int!`
+  """
+  content_count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt_count` of type `Int!`
+  """
+  lastModifiedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `Note`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt_min` of type `Timestamp`
+  """
+  lastModifiedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Note`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt_max` of type `Timestamp`
+  """
+  lastModifiedAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'Note'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Note_Key {
+  """
+  ✨ Generated from Field `Note`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Note`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Note'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Note_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Note_Filter
+}
+"""
+✨ Generated order input type for table 'Note'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Note_Order {
+  """
+  ✨ Generated from Field `Note`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`authorId` of type `UUID!`
+  """
+  authorId: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`author` of type `User!`
+  """
+  author: User_Order
+  """
+  ✨ Generated from Field `Note`.`content` of type `String!`
+  """
+  content: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt` of type `Timestamp`
+  """
+  lastModifiedAt: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`authorId_count` of type `Int!`
+  """
+  authorId_count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`content_count` of type `Int!`
+  """
+  content_count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt_count` of type `Int!`
+  """
+  lastModifiedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt_min` of type `Timestamp`
+  """
+  lastModifiedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Note`.`lastModifiedAt_max` of type `Timestamp`
+  """
+  lastModifiedAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Project'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Project_Data {
+  """
+  ✨ Generated from Field `Project`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Project`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Project`.`ownerId` of type `UUID!`
+  """
+  ownerId: UUID
+  """
+  ✨ `_expr` server value variant of `ownerId` (✨ Generated from Field `Project`.`ownerId` of type `UUID!`)
+  """
+  ownerId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Project`.`owner` of type `User!`
+  """
+  owner: User_Key
+  """
+  ✨ Generated from Field `Project`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Project`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Project`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Project`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Project`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Project`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Project`.`dueDate` of type `Date`
+  """
+  dueDate: Date
+  """
+  ✨ `_date` server value variant of `dueDate` (✨ Generated from Field `Project`.`dueDate` of type `Date`)
+  """
+  dueDate_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `dueDate` (✨ Generated from Field `Project`.`dueDate` of type `Date`)
+  """
+  dueDate_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `dueDate` (✨ Generated from Field `Project`.`dueDate` of type `Date`)
+  """
+  dueDate_update: [Date_Update!]
+  """
+  ✨ Generated from Field `Project`.`name` of type `String!`
+  """
+  name: String
+  """
+  ✨ `_expr` server value variant of `name` (✨ Generated from Field `Project`.`name` of type `String!`)
+  """
+  name_expr: String_Expr
+  """
+  ✨ Generated from Field `Project`.`status` of type `String`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Project`.`status` of type `String`)
+  """
+  status_expr: String_Expr
+  """
+  ✨ Generated from Field `Project`.`visibility` of type `String`
+  """
+  visibility: String
+  """
+  ✨ `_expr` server value variant of `visibility` (✨ Generated from Field `Project`.`visibility` of type `String`)
+  """
+  visibility_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Project'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Project_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Project_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Project_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Project_Filter!]
+  """
+  ✨ Generated from Field `Project`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Project`.`ownerId` of type `UUID!`
+  """
+  ownerId: UUID_Filter
+  """
+  ✨ Generated from Field `Project`.`owner` of type `User!`
+  """
+  owner: User_Filter
+  """
+  ✨ Generated from Field `Project`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Project`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Project`.`dueDate` of type `Date`
+  """
+  dueDate: Date_Filter
+  """
+  ✨ Generated from Field `Project`.`name` of type `String!`
+  """
+  name: String_Filter
+  """
+  ✨ Generated from Field `Project`.`status` of type `String`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `Project`.`visibility` of type `String`
+  """
+  visibility: String_Filter
+  """
+  ✨ Generated from Field `Project`.`tasks_on_project` of type `[Task!]!`
+  """
+  tasks_on_project: Task_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'Project'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Project_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Project_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Project_Filter
+}
+"""
+✨ Generated having input type for table 'Project'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Project_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Project_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Project_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Project_Having!]
+  """
+  ✨ Generated from Field `Project`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`dueDate_count` of type `Int!`
+  """
+  dueDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`name_count` of type `Int!`
+  """
+  name_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`ownerId_count` of type `Int!`
+  """
+  ownerId_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`visibility_count` of type `Int!`
+  """
+  visibility_count: Int_Filter
+  """
+  ✨ Generated from Field `Project`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Project`.`dueDate_min` of type `Date`
+  """
+  dueDate_min: Date_Filter
+  """
+  ✨ Generated from Field `Project`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Project`.`dueDate_max` of type `Date`
+  """
+  dueDate_max: Date_Filter
+}
+"""
+✨ Generated key input type for table 'Project'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Project_Key {
+  """
+  ✨ Generated from Field `Project`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Project`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Project'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Project_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Project_Filter
+}
+"""
+✨ Generated order input type for table 'Project'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Project_Order {
+  """
+  ✨ Generated from Field `Project`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`ownerId` of type `UUID!`
+  """
+  ownerId: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`owner` of type `User!`
+  """
+  owner: User_Order
+  """
+  ✨ Generated from Field `Project`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`dueDate` of type `Date`
+  """
+  dueDate: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`name` of type `String!`
+  """
+  name: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`status` of type `String`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`visibility` of type `String`
+  """
+  visibility: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`dueDate_count` of type `Int!`
+  """
+  dueDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`name_count` of type `Int!`
+  """
+  name_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`ownerId_count` of type `Int!`
+  """
+  ownerId_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`visibility_count` of type `Int!`
+  """
+  visibility_count: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`dueDate_min` of type `Date`
+  """
+  dueDate_min: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Project`.`dueDate_max` of type `Date`
+  """
+  dueDate_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'Task'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input Task_Data {
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Task`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Task`.`assignedToId` of type `UUID`
+  """
+  assignedToId: UUID
+  """
+  ✨ `_expr` server value variant of `assignedToId` (✨ Generated from Field `Task`.`assignedToId` of type `UUID`)
+  """
+  assignedToId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Task`.`creatorId` of type `UUID!`
+  """
+  creatorId: UUID
+  """
+  ✨ `_expr` server value variant of `creatorId` (✨ Generated from Field `Task`.`creatorId` of type `UUID!`)
+  """
+  creatorId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Task`.`projectId` of type `UUID`
+  """
+  projectId: UUID
+  """
+  ✨ `_expr` server value variant of `projectId` (✨ Generated from Field `Task`.`projectId` of type `UUID`)
+  """
+  projectId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `Task`.`assignedTo` of type `User`
+  """
+  assignedTo: User_Key
+  """
+  ✨ Generated from Field `Task`.`creator` of type `User!`
+  """
+  creator: User_Key
+  """
+  ✨ Generated from Field `Task`.`project` of type `Project`
+  """
+  project: Project_Key
+  """
+  ✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `Task`.`description` of type `String`
+  """
+  description: String
+  """
+  ✨ `_expr` server value variant of `description` (✨ Generated from Field `Task`.`description` of type `String`)
+  """
+  description_expr: String_Expr
+  """
+  ✨ Generated from Field `Task`.`dueDate` of type `Date`
+  """
+  dueDate: Date
+  """
+  ✨ `_date` server value variant of `dueDate` (✨ Generated from Field `Task`.`dueDate` of type `Date`)
+  """
+  dueDate_date: Date_Relative
+  """
+  ✨ `_expr` server value variant of `dueDate` (✨ Generated from Field `Task`.`dueDate` of type `Date`)
+  """
+  dueDate_expr: Date_Expr
+  """
+  ✨ `_update` server value variant of `dueDate` (✨ Generated from Field `Task`.`dueDate` of type `Date`)
+  """
+  dueDate_update: [Date_Update!]
+  """
+  ✨ Generated from Field `Task`.`priority` of type `String`
+  """
+  priority: String
+  """
+  ✨ `_expr` server value variant of `priority` (✨ Generated from Field `Task`.`priority` of type `String`)
+  """
+  priority_expr: String_Expr
+  """
+  ✨ Generated from Field `Task`.`status` of type `String`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `Task`.`status` of type `String`)
+  """
+  status_expr: String_Expr
+  """
+  ✨ Generated from Field `Task`.`title` of type `String!`
+  """
+  title: String
+  """
+  ✨ `_expr` server value variant of `title` (✨ Generated from Field `Task`.`title` of type `String!`)
+  """
+  title_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'Task'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Task_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [Task_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: Task_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [Task_Filter!]
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `Task`.`assignedToId` of type `UUID`
+  """
+  assignedToId: UUID_Filter
+  """
+  ✨ Generated from Field `Task`.`creatorId` of type `UUID!`
+  """
+  creatorId: UUID_Filter
+  """
+  ✨ Generated from Field `Task`.`projectId` of type `UUID`
+  """
+  projectId: UUID_Filter
+  """
+  ✨ Generated from Field `Task`.`assignedTo` of type `User`
+  """
+  assignedTo: User_Filter
+  """
+  ✨ Generated from Field `Task`.`creator` of type `User!`
+  """
+  creator: User_Filter
+  """
+  ✨ Generated from Field `Task`.`project` of type `Project`
+  """
+  project: Project_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`description` of type `String`
+  """
+  description: String_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate` of type `Date`
+  """
+  dueDate: Date_Filter
+  """
+  ✨ Generated from Field `Task`.`priority` of type `String`
+  """
+  priority: String_Filter
+  """
+  ✨ Generated from Field `Task`.`status` of type `String`
+  """
+  status: String_Filter
+  """
+  ✨ Generated from Field `Task`.`title` of type `String!`
+  """
+  title: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'Task'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input Task_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [Task_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: Task_Filter
+}
+"""
+✨ Generated having input type for table 'Task'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input Task_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [Task_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: Task_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [Task_Having!]
+  """
+  ✨ Generated from Field `Task`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`assignedToId_count` of type `Int!`
+  """
+  assignedToId_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`creatorId_count` of type `Int!`
+  """
+  creatorId_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`description_count` of type `Int!`
+  """
+  description_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate_count` of type `Int!`
+  """
+  dueDate_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`priority_count` of type `Int!`
+  """
+  priority_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`projectId_count` of type `Int!`
+  """
+  projectId_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`title_count` of type `Int!`
+  """
+  title_count: Int_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate_min` of type `Date`
+  """
+  dueDate_min: Date_Filter
+  """
+  ✨ Generated from Field `Task`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `Task`.`dueDate_max` of type `Date`
+  """
+  dueDate_max: Date_Filter
+}
+"""
+✨ Generated key input type for table 'Task'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input Task_Key {
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `Task`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'Task'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input Task_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: Task_Filter
+}
+"""
+✨ Generated order input type for table 'Task'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input Task_Order {
+  """
+  ✨ Generated from Field `Task`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`assignedToId` of type `UUID`
+  """
+  assignedToId: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`creatorId` of type `UUID!`
+  """
+  creatorId: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`projectId` of type `UUID`
+  """
+  projectId: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`assignedTo` of type `User`
+  """
+  assignedTo: User_Order
+  """
+  ✨ Generated from Field `Task`.`creator` of type `User!`
+  """
+  creator: User_Order
+  """
+  ✨ Generated from Field `Task`.`project` of type `Project`
+  """
+  project: Project_Order
+  """
+  ✨ Generated from Field `Task`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`description` of type `String`
+  """
+  description: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate` of type `Date`
+  """
+  dueDate: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`priority` of type `String`
+  """
+  priority: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`status` of type `String`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`title` of type `String!`
+  """
+  title: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`assignedToId_count` of type `Int!`
+  """
+  assignedToId_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`creatorId_count` of type `Int!`
+  """
+  creatorId_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`description_count` of type `Int!`
+  """
+  description_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate_count` of type `Int!`
+  """
+  dueDate_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`priority_count` of type `Int!`
+  """
+  priority_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`projectId_count` of type `Int!`
+  """
+  projectId_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`title_count` of type `Int!`
+  """
+  title_count: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate_min` of type `Date`
+  """
+  dueDate_min: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `Task`.`dueDate_max` of type `Date`
+  """
+  dueDate_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'User'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input User_Data {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `User`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: String
+  """
+  ✨ `_expr` server value variant of `displayName` (✨ Generated from Field `User`.`displayName` of type `String`)
+  """
+  displayName_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String
+  """
+  ✨ `_expr` server value variant of `email` (✨ Generated from Field `User`.`email` of type `String!`)
+  """
+  email_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`passwordHash` of type `String!`
+  """
+  passwordHash: String
+  """
+  ✨ `_expr` server value variant of `passwordHash` (✨ Generated from Field `User`.`passwordHash` of type `String!`)
+  """
+  passwordHash_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`profilePictureUrl` of type `String`
+  """
+  profilePictureUrl: String
+  """
+  ✨ `_expr` server value variant of `profilePictureUrl` (✨ Generated from Field `User`.`profilePictureUrl` of type `String`)
+  """
+  profilePictureUrl_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`userType` of type `String`
+  """
+  userType: String
+  """
+  ✨ `_expr` server value variant of `userType` (✨ Generated from Field `User`.`userType` of type `String`)
+  """
+  userType_expr: String_Expr
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String
+  """
+  ✨ `_expr` server value variant of `username` (✨ Generated from Field `User`.`username` of type `String!`)
+  """
+  username_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [User_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: User_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [User_Filter!]
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: String_Filter
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: String_Filter
+  """
+  ✨ Generated from Field `User`.`passwordHash` of type `String!`
+  """
+  passwordHash: String_Filter
+  """
+  ✨ Generated from Field `User`.`profilePictureUrl` of type `String`
+  """
+  profilePictureUrl: String_Filter
+  """
+  ✨ Generated from Field `User`.`userType` of type `String`
+  """
+  userType: String_Filter
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: String_Filter
+  """
+  ✨ Generated from Field `User`.`notes_on_author` of type `[Note!]!`
+  """
+  notes_on_author: Note_ListFilter
+  """
+  ✨ Generated from Field `User`.`projects_on_owner` of type `[Project!]!`
+  """
+  projects_on_owner: Project_ListFilter
+  """
+  ✨ Generated from Field `User`.`tasks_on_assignedTo` of type `[Task!]!`
+  """
+  tasks_on_assignedTo: Task_ListFilter
+  """
+  ✨ Generated from Field `User`.`tasks_on_creator` of type `[Task!]!`
+  """
+  tasks_on_creator: Task_ListFilter
+  """
+  ✨ Generated from Field `User`.`userLearningProgresses_on_user` of type `[UserLearningProgress!]!`
+  """
+  userLearningProgresses_on_user: UserLearningProgress_ListFilter
+  """
+  ✨ Generated from Field `User`.`learningModules_via_UserLearningProgress` of type `[LearningModule!]!`
+  """
+  learningModules_via_UserLearningProgress: LearningModule_ListFilter
+}
+"""
+✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input User_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [User_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: User_Filter
+}
+"""
+✨ Generated having input type for table 'User'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input User_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [User_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: User_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [User_Having!]
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`passwordHash_count` of type `Int!`
+  """
+  passwordHash_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`profilePictureUrl_count` of type `Int!`
+  """
+  profilePictureUrl_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`userType_count` of type `Int!`
+  """
+  userType_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: Int_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+}
+"""
+✨ Generated key input type for table 'User'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input User_Key {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: UUID
+  """
+  ✨ `_expr` server value variant of `id` (✨ Generated from Field `User`.`id` of type `UUID!`)
+  """
+  id_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'User'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input User_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: User_Filter
+}
+"""
+✨ Generated order input type for table 'User'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input User_Order {
+  """
+  ✨ Generated from Field `User`.`id` of type `UUID!`
+  """
+  id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName` of type `String`
+  """
+  displayName: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email` of type `String!`
+  """
+  email: OrderDirection
+  """
+  ✨ Generated from Field `User`.`passwordHash` of type `String!`
+  """
+  passwordHash: OrderDirection
+  """
+  ✨ Generated from Field `User`.`profilePictureUrl` of type `String`
+  """
+  profilePictureUrl: OrderDirection
+  """
+  ✨ Generated from Field `User`.`userType` of type `String`
+  """
+  userType: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username` of type `String!`
+  """
+  username: OrderDirection
+  """
+  ✨ Generated from Field `User`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`displayName_count` of type `Int!`
+  """
+  displayName_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`email_count` of type `Int!`
+  """
+  email_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`id_count` of type `Int!`
+  """
+  id_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`passwordHash_count` of type `Int!`
+  """
+  passwordHash_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`profilePictureUrl_count` of type `Int!`
+  """
+  profilePictureUrl_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`userType_count` of type `Int!`
+  """
+  userType_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`username_count` of type `Int!`
+  """
+  username_count: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `User`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+}
+"""
+✨ Generated data input type for table 'UserLearningProgress'. It includes all necessary fields for creating or upserting rows into table.
+"""
+input UserLearningProgress_Data {
+  """
+  ✨ Generated from Field `UserLearningProgress`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserLearningProgress`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModuleId` of type `UUID!`
+  """
+  learningModuleId: UUID
+  """
+  ✨ `_expr` server value variant of `learningModuleId` (✨ Generated from Field `UserLearningProgress`.`learningModuleId` of type `UUID!`)
+  """
+  learningModuleId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModule` of type `LearningModule!`
+  """
+  learningModule: LearningModule_Key
+  """
+  ✨ Generated from Field `UserLearningProgress`.`user` of type `User!`
+  """
+  user: User_Key
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate` of type `Timestamp`
+  """
+  completionDate: Timestamp
+  """
+  ✨ `_expr` server value variant of `completionDate` (✨ Generated from Field `UserLearningProgress`.`completionDate` of type `Timestamp`)
+  """
+  completionDate_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `completionDate` (✨ Generated from Field `UserLearningProgress`.`completionDate` of type `Timestamp`)
+  """
+  completionDate_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `completionDate` (✨ Generated from Field `UserLearningProgress`.`completionDate` of type `Timestamp`)
+  """
+  completionDate_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `createdAt` (✨ Generated from Field `UserLearningProgress`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `createdAt` (✨ Generated from Field `UserLearningProgress`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `createdAt` (✨ Generated from Field `UserLearningProgress`.`createdAt` of type `Timestamp!`)
+  """
+  createdAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt` of type `Timestamp`
+  """
+  lastAccessedAt: Timestamp
+  """
+  ✨ `_expr` server value variant of `lastAccessedAt` (✨ Generated from Field `UserLearningProgress`.`lastAccessedAt` of type `Timestamp`)
+  """
+  lastAccessedAt_expr: Timestamp_Expr
+  """
+  ✨ `_time` server value variant of `lastAccessedAt` (✨ Generated from Field `UserLearningProgress`.`lastAccessedAt` of type `Timestamp`)
+  """
+  lastAccessedAt_time: Timestamp_Relative
+  """
+  ✨ `_update` server value variant of `lastAccessedAt` (✨ Generated from Field `UserLearningProgress`.`lastAccessedAt` of type `Timestamp`)
+  """
+  lastAccessedAt_update: [Timestamp_Update!]
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score` of type `Int`
+  """
+  score: Int
+  """
+  ✨ `_expr` server value variant of `score` (✨ Generated from Field `UserLearningProgress`.`score` of type `Int`)
+  """
+  score_expr: Int_Expr
+  """
+  ✨ `_update` server value variant of `score` (✨ Generated from Field `UserLearningProgress`.`score` of type `Int`)
+  """
+  score_update: [Int_Update!]
+  """
+  ✨ Generated from Field `UserLearningProgress`.`status` of type `String!`
+  """
+  status: String
+  """
+  ✨ `_expr` server value variant of `status` (✨ Generated from Field `UserLearningProgress`.`status` of type `String!`)
+  """
+  status_expr: String_Expr
+}
+"""
+✨ Generated filter input type for table 'UserLearningProgress'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserLearningProgress_Filter {
+  """
+  Apply multiple filter conditions using `AND` logic.
+  """
+  _and: [UserLearningProgress_Filter!]
+  """
+  Negate the result of the provided filter condition.
+  """
+  _not: UserLearningProgress_Filter
+  """
+  Apply multiple filter conditions using `OR` logic.
+  """
+  _or: [UserLearningProgress_Filter!]
+  """
+  ✨ Generated from Field `UserLearningProgress`.`userId` of type `UUID!`
+  """
+  userId: UUID_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModuleId` of type `UUID!`
+  """
+  learningModuleId: UUID_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModule` of type `LearningModule!`
+  """
+  learningModule: LearningModule_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`user` of type `User!`
+  """
+  user: User_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate` of type `Timestamp`
+  """
+  completionDate: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt` of type `Timestamp`
+  """
+  lastAccessedAt: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score` of type `Int`
+  """
+  score: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`status` of type `String!`
+  """
+  status: String_Filter
+}
+"""
+✨ Generated first-row input type for table 'UserLearningProgress'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
+"""
+input UserLearningProgress_FirstRow {
+  """
+  Order the result by the specified fields.
+  """
+  orderBy: [UserLearningProgress_Order!]
+  """
+  Filters rows based on the specified conditions.
+  """
+  where: UserLearningProgress_Filter
+}
+"""
+✨ Generated having input type for table 'UserLearningProgress'. This input allows you to filter groups during aggregate queries using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
+"""
+input UserLearningProgress_Having {
+  """
+  Apply multiple Having conditions using `AND` logic.
+  """
+  _and: [UserLearningProgress_Having!]
+  """
+  Whether to apply DISTINCT to the aggregate function.
+  """
+  _distinct: Boolean
+  """
+  Negate the result of the provided Having condition.
+  """
+  _not: UserLearningProgress_Having
+  """
+  Apply multiple Having conditions using `OR` logic.
+  """
+  _or: [UserLearningProgress_Having!]
+  """
+  ✨ Generated from Field `UserLearningProgress`.`_count` of type `Int!`
+  """
+  _count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate_count` of type `Int!`
+  """
+  completionDate_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt_count` of type `Int!`
+  """
+  lastAccessedAt_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModuleId_count` of type `Int!`
+  """
+  learningModuleId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_count` of type `Int!`
+  """
+  score_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`status_count` of type `Int!`
+  """
+  status_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`userId_count` of type `Int!`
+  """
+  userId_count: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_sum` of type `Int`
+  """
+  score_sum: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_avg` of type `Float`
+  """
+  score_avg: Float_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate_min` of type `Timestamp`
+  """
+  completionDate_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt_min` of type `Timestamp`
+  """
+  lastAccessedAt_min: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_min` of type `Int`
+  """
+  score_min: Int_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate_max` of type `Timestamp`
+  """
+  completionDate_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt_max` of type `Timestamp`
+  """
+  lastAccessedAt_max: Timestamp_Filter
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_max` of type `Int`
+  """
+  score_max: Int_Filter
+}
+"""
+✨ Generated key input type for table 'UserLearningProgress'. It represents the primary key fields used to uniquely identify a row in the table.
+"""
+input UserLearningProgress_Key {
+  """
+  ✨ Generated from Field `UserLearningProgress`.`userId` of type `UUID!`
+  """
+  userId: UUID
+  """
+  ✨ `_expr` server value variant of `userId` (✨ Generated from Field `UserLearningProgress`.`userId` of type `UUID!`)
+  """
+  userId_expr: UUID_Expr
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModuleId` of type `UUID!`
+  """
+  learningModuleId: UUID
+  """
+  ✨ `_expr` server value variant of `learningModuleId` (✨ Generated from Field `UserLearningProgress`.`learningModuleId` of type `UUID!`)
+  """
+  learningModuleId_expr: UUID_Expr
+}
+"""
+✨ Generated list filter input type for table 'UserLearningProgress'. This input applies filtering logic based on the count or existence of related objects that matches certain criteria.
+"""
+input UserLearningProgress_ListFilter {
+  """
+  The desired number of objects that match the condition (defaults to at least one).
+  """
+  count: Int_Filter = {gt:0}
+  """
+  Condition of the related objects to filter for.
+  """
+  exist: UserLearningProgress_Filter
+}
+"""
+✨ Generated order input type for table 'UserLearningProgress'. This input defines the sorting order of rows in query results based on one or more fields.
+"""
+input UserLearningProgress_Order {
+  """
+  ✨ Generated from Field `UserLearningProgress`.`userId` of type `UUID!`
+  """
+  userId: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModuleId` of type `UUID!`
+  """
+  learningModuleId: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModule` of type `LearningModule!`
+  """
+  learningModule: LearningModule_Order
+  """
+  ✨ Generated from Field `UserLearningProgress`.`user` of type `User!`
+  """
+  user: User_Order
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate` of type `Timestamp`
+  """
+  completionDate: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt` of type `Timestamp!`
+  """
+  createdAt: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt` of type `Timestamp`
+  """
+  lastAccessedAt: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score` of type `Int`
+  """
+  score: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`status` of type `String!`
+  """
+  status: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`_count` of type `Int!`
+  """
+  _count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate_count` of type `Int!`
+  """
+  completionDate_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt_count` of type `Int!`
+  """
+  createdAt_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt_count` of type `Int!`
+  """
+  lastAccessedAt_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`learningModuleId_count` of type `Int!`
+  """
+  learningModuleId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_count` of type `Int!`
+  """
+  score_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`status_count` of type `Int!`
+  """
+  status_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`userId_count` of type `Int!`
+  """
+  userId_count: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_sum` of type `Int`
+  """
+  score_sum: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_avg` of type `Float`
+  """
+  score_avg: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate_min` of type `Timestamp`
+  """
+  completionDate_min: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt_min` of type `Timestamp`
+  """
+  createdAt_min: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt_min` of type `Timestamp`
+  """
+  lastAccessedAt_min: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_min` of type `Int`
+  """
+  score_min: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`completionDate_max` of type `Timestamp`
+  """
+  completionDate_max: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`createdAt_max` of type `Timestamp`
+  """
+  createdAt_max: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`lastAccessedAt_max` of type `Timestamp`
+  """
+  lastAccessedAt_max: OrderDirection
+  """
+  ✨ Generated from Field `UserLearningProgress`.`score_max` of type `Int`
+  """
+  score_max: OrderDirection
+}

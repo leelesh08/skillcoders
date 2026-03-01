@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
  import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
+import Loading from '@/components/ui/Loading';
+import ErrorMessage from '@/components/ui/ErrorMessage';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const instructorsConst = [

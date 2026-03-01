@@ -1,4 +1,4 @@
- import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
  import { motion, AnimatePresence } from 'framer-motion';
  import { X, CheckCircle, XCircle, Clock, Trophy, ArrowRight, RotateCcw } from 'lucide-react';
  import { Button } from '@/components/ui/button';
@@ -35,31 +35,52 @@
    const [isComplete, setIsComplete] = useState(false);
    const [timeLeft, setTimeLeft] = useState(30);
  
-   const currentQuestion = questions[currentIndex];
-   const progress = ((currentIndex + 1) / questions.length) * 100;
+  const currentQuestion = questions.length > 0 ? questions[currentIndex] : null;
+  const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
  
-   useEffect(() => {
-     if (!isOpen || isAnswered || isComplete) return;
-     
-     const timer = setInterval(() => {
-       setTimeLeft((prev) => {
-         if (prev <= 1) {
-           handleTimeout();
-           return 30;
-         }
-         return prev - 1;
-       });
-     }, 1000);
+  const moveToNext = useCallback(() => {
+    setCurrentIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex >= questions.length) {
+        // compute final score including current selection if it was just answered
+        const currentCorrect = questions[prevIndex]?.correctAnswer ?? -1;
+        const extra = parseInt(selectedAnswer || '-1') === currentCorrect ? 1 : 0;
+        setIsComplete(true);
+        onComplete(score + extra, questions.length);
+        return prevIndex;
+      }
+      // advance
+      setSelectedAnswer(null);
+      setIsAnswered(false);
+      setTimeLeft(30);
+      return nextIndex;
+    });
+  }, [questions, onComplete, score, selectedAnswer]);
+
+  const handleTimeout = useCallback(() => {
+    if (!isAnswered) {
+      setIsAnswered(true);
+      setTimeout(() => moveToNext(), 1500);
+    }
+  }, [isAnswered, moveToNext]);
+
+  useEffect(() => {
+    if (!isOpen || isAnswered || isComplete) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          handleTimeout();
+          return 30;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isOpen, currentIndex, isAnswered, isComplete, handleTimeout]);
  
-     return () => clearInterval(timer);
-   }, [isOpen, currentIndex, isAnswered, isComplete]);
- 
-   const handleTimeout = () => {
-     if (!isAnswered) {
-       setIsAnswered(true);
-       setTimeout(() => moveToNext(), 1500);
-     }
-   };
+  
  
    const handleSubmit = () => {
      if (selectedAnswer === null) return;
@@ -71,17 +92,7 @@
      }
    };
  
-   const moveToNext = () => {
-     if (currentIndex + 1 >= questions.length) {
-       setIsComplete(true);
-       onComplete(score + (parseInt(selectedAnswer || '-1') === currentQuestion?.correctAnswer ? 1 : 0), questions.length);
-     } else {
-       setCurrentIndex((prev) => prev + 1);
-       setSelectedAnswer(null);
-       setIsAnswered(false);
-       setTimeLeft(30);
-     }
-   };
+
  
    const resetQuiz = () => {
      setCurrentIndex(0);
@@ -96,8 +107,8 @@
      resetQuiz();
      onClose();
    };
- 
-   if (!isOpen) return null;
+
+  if (questions.length === 0 || !isOpen) return null;
  
    return (
      <AnimatePresence>

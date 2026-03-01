@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Swords, Users, Trophy, Clock, Shield, Play, IndianRupee } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
@@ -11,11 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Slider } from '@/components/ui/slider';
-import { api } from '@/lib/api';
-import { Skeleton } from '@/components/ui/skeleton';
-import Loading from '@/components/ui/Loading';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { api } from '@/lib/api';
+import { auth } from '@/lib/firebase';
 
 interface BattleData {
   id: number;
@@ -24,12 +22,14 @@ interface BattleData {
   blueTeam: { name: string; score: number; members: number };
   prize: number;
   entryFee: number;
-  timeLeft: string;
-  viewers: number;
-  status: string;
+  // following fields are only used for live-streamed battles and may be absent
+  timeLeft?: string;
+  viewers?: number;
+  status?: string;
 }
 
-const activeBattlesConst: BattleData[] = [
+// sample battles - these could eventually be loaded from the server
+const activeBattles: BattleData[] = [
   {
     id: 1,
     title: 'Web App Siege',
@@ -37,9 +37,7 @@ const activeBattlesConst: BattleData[] = [
     blueTeam: { name: 'Azure Defenders', score: 2380, members: 12 },
     prize: 25000,
     entryFee: 50,
-    timeLeft: '2:34:12',
-    viewers: 1247,
-    status: 'live',
+    // time/viewer/status removed since battles are no longer live-streamed
   },
   {
     id: 2,
@@ -48,13 +46,10 @@ const activeBattlesConst: BattleData[] = [
     blueTeam: { name: 'Blue Shield', score: 1920, members: 8 },
     prize: 15000,
     entryFee: 50,
-    timeLeft: '1:15:45',
-    viewers: 856,
-    status: 'live',
   },
 ];
 
-const upcomingBattlesConst = [
+const upcomingBattles = [
   {
     id: 3,
     title: 'CTF Championship',
@@ -76,39 +71,61 @@ const upcomingBattlesConst = [
 ];
 
 const Battle = () => {
+  // make battles stateful so we can simulate score changes
+  const [battles, setBattles] = useState<BattleData[]>(activeBattles);
+
   // Track team selection per battle separately
   const [selectedTeams, setSelectedTeams] = useState<Record<number, 'red' | 'blue' | null>>({});
   const [bidAmount, setBidAmount] = useState(50);
   const [showJoinDialog, setShowJoinDialog] = useState(false);
   const [selectedBattle, setSelectedBattle] = useState<BattleData | null>(null);
-  const [activeBattles, setActiveBattles] = useState<BattleData[]>(activeBattlesConst);
-  const [upcomingBattles, setUpcomingBattles] = useState(upcomingBattlesConst);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [groupName, setGroupName] = useState('');
+  type JoinedInfo = { orderId: string; team?: string; amount?: number; groupName?: string };
+  const [joinedOrders, setJoinedOrders] = useState<Record<number, JoinedInfo>>(() => {
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('joinedBattles') : null;
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  });
 
   useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    Promise.all([api.get('/battles/active').catch(() => null), api.get('/battles/upcoming').catch(() => null)])
-      .then(([active, upcoming]) => {
-        if (!mounted) return;
-        if (Array.isArray(active)) setActiveBattles(active);
-        if (Array.isArray(upcoming)) setUpcomingBattles(upcoming);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err?.message || String(err));
-      })
-      .finally(() => {
-        if (!mounted) return;
-        setLoading(false);
-      });
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('joinedBattles', JSON.stringify(joinedOrders));
+      }
+    } catch (e) {
+      console.warn('Failed to persist joined battles', e);
+    }
+  }, [joinedOrders]);
 
-    return () => { mounted = false; };
-  }, []);
+  // helper to update a battle's score after an action
+  const simulateAction = (battleId: number, action: 'attack' | 'defend') => {
+    setBattles(prev =>
+      prev.map(b => {
+        if (b.id !== battleId) return b;
+        const delta = Math.floor(Math.random() * 100) + 50;
+        if (action === 'attack') {
+          b.redTeam.score += delta;
+          // defensive resistance
+          b.blueTeam.score = Math.max(0, b.blueTeam.score - Math.floor(delta / 4));
+        } else {
+          b.blueTeam.score += delta;
+          b.redTeam.score = Math.max(0, b.redTeam.score - Math.floor(delta / 4));
+        }
+        return { ...b };
+      })
+    );
+  };
 
-  if (loading) return <Loading message="Loading battles..." />;
-  if (error) return <ErrorMessage message={error} />;
+  // check win condition and optionally certificate
+  const checkForVictory = (battle: BattleData) => {
+    const diff = Math.abs(battle.redTeam.score - battle.blueTeam.score);
+    if (diff > 1000) {
+      alert(`Battle "${battle.title}" ended! ${battle.redTeam.score > battle.blueTeam.score ? 'Red' : 'Blue'} team wins. Certificate generated.`);
+    }
+  };
 
   const handleSelectTeam = (battleId: number, team: 'red' | 'blue') => {
     setSelectedTeams(prev => ({
@@ -122,16 +139,65 @@ const Battle = () => {
       alert('Please select a team (Red or Blue) before joining!');
       return;
     }
+    setGroupName('');
     setSelectedBattle(battle);
     setShowJoinDialog(true);
   };
 
-  const handleConfirmJoin = () => {
+  const handleConfirmJoin = async () => {
     if (selectedBattle && selectedTeams[selectedBattle.id]) {
       console.log(`Joining ${selectedBattle.title} as ${selectedTeams[selectedBattle.id]} team with bid ₹${bidAmount}`);
-      // Here you would integrate with payment and streaming
-      setShowJoinDialog(false);
-      setBidAmount(50);
+      // Attempt to notify backend and create checkout
+      try {
+        const user = auth.currentUser;
+        const userId = user?.uid ?? 'anonymous';
+        const email = user?.email;
+        await api.post(`/battles/${selectedBattle.id}/join`, { userId, email }).catch(() => null);
+        const payload = { type: 'battle', id: selectedBattle.id, amount: bidAmount, team: selectedTeams[selectedBattle.id], userId, email, groupName };
+        const res = await api.post('/checkout', payload).catch(() => null) as { orderId?: string; url?: string; sessionId?: string } | null;
+        if (res) {
+          setJoinedOrders(prev => ({
+            ...prev,
+            [selectedBattle.id]: {
+              orderId: res.orderId || prev[selectedBattle.id]?.orderId || '',
+              team: selectedTeams[selectedBattle.id] ?? undefined,
+              amount: bidAmount,
+              groupName,
+            },
+          }));
+          if (res.orderId) {
+            // navigate to checkout status if present (frontend handles this route)
+            window.location.href = `/checkout/status?orderId=${encodeURIComponent(res.orderId)}`;
+            return;
+          }
+        }
+        if (res && res.url) {
+          window.location.href = res.url;
+          return;
+        }
+        if (res && res.sessionId) {
+          // if session-only response, store mapping if the server also returned an orderId earlier
+          const pk = import.meta.env.VITE_STRIPE_PK as string | undefined;
+          if (!pk) {
+            window.location.href = `/checkout/status?session_id=${encodeURIComponent(res.sessionId)}`;
+            return;
+          }
+          try {
+            const stripeModule = await import('@stripe/stripe-js');
+            const stripe = await stripeModule.loadStripe(pk);
+            if (stripe) await stripe.redirectToCheckout({ sessionId: res.sessionId });
+          } catch (e) {
+            console.error('Stripe redirect failed', e);
+            alert('Unable to redirect to Stripe checkout');
+          }
+        }
+      } catch (e) {
+        console.error('Join failed', e);
+        alert('Failed to join battle');
+      } finally {
+        setShowJoinDialog(false);
+        setBidAmount(50);
+      }
     }
   };
 
@@ -150,7 +216,7 @@ const Battle = () => {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-destructive/10 border border-destructive/30 mb-4">
               <Swords className="w-4 h-4 text-destructive" />
-              <span className="text-sm text-destructive font-medium">Live Battles</span>
+              <span className="text-sm text-destructive font-medium">Battles</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               <GlowText as="span" color="purple" animate={false}>Red</GlowText>
@@ -159,7 +225,7 @@ const Battle = () => {
               {' Battle Arena'}
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Join live cybersecurity battles, compete in teams, and win prizes. 
+              Play online team-based cybersecurity battles, attack or defend, and win prizes. 
               Bid from ₹50 to ₹1,00,000 per battle!
             </p>
           </motion.div>
@@ -168,21 +234,11 @@ const Battle = () => {
           <section className="mb-12">
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-destructive animate-pulse" />
-              Live Battles
+              Battles
             </h2>
             
             <div className="grid lg:grid-cols-2 gap-6">
-              {loading ? (
-                <></>
-              ) : null}
-              {loading ? (
-                Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i}><Skeleton className="h-48 w-full rounded-lg" /></div>
-                ))
-              ) : error ? (
-                <div className="text-red-500">{error}</div>
-              ) : (
-                activeBattles.map((battle, index) => (
+              {battles.map((battle, index) => (
                 <motion.div
                   key={battle.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -192,25 +248,13 @@ const Battle = () => {
                   <GlowCard className="p-0 overflow-hidden" glowColor="purple">
                     {/* Battle Header */}
                     <div className="p-6 bg-gradient-to-r from-destructive/10 via-transparent to-primary/10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-2">
-                          <Badge variant="destructive" className="animate-pulse">
-                            <span className="flex items-center gap-1">
-                              <Play className="w-3 h-3 fill-current" />
-                              LIVE
-                            </span>
-                          </Badge>
-                          <span className="text-muted-foreground text-sm">
-                            {battle.viewers.toLocaleString()} watching
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm">
-                          <Clock className="w-4 h-4 text-muted-foreground" />
-                          <span className="font-mono text-primary">{battle.timeLeft}</span>
-                        </div>
-                      </div>
-                      
+                      {/* Battle title */}
                       <h3 className="text-xl font-bold mb-4">{battle.title}</h3>
+                      {joinedOrders[battle.id]?.groupName && (
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Group: <span className="font-semibold">{joinedOrders[battle.id].groupName}</span>
+                        </p>
+                      )}
 
                       {/* Teams vs - SEPARATE SELECTION PER BATTLE */}
                       <div className="grid grid-cols-3 items-center gap-4">
@@ -298,12 +342,33 @@ const Battle = () => {
                           </p>
                         </div>
                       </div>
-                      <GlowButton 
-                        variant="primary"
-                        onClick={() => handleJoinBattle(battle)}
-                      >
-                        Join Battle
-                      </GlowButton>
+                      {joinedOrders[battle.id] ? (
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Button size="sm" variant="ghost" onClick={() => { window.location.href = `/checkout/status?orderId=${encodeURIComponent(joinedOrders[battle.id].orderId)}`; }}>
+                              View Status
+                            </Button>
+                          </div>
+                          {/* action buttons when participant has joined */}
+                          {joinedOrders[battle.id].team === 'red' && (
+                            <GlowButton variant="outline" size="sm" onClick={() => { simulateAction(battle.id, 'attack'); const b = battles.find(b=>b.id===battle.id); if(b) checkForVictory(b); }}>
+                              Attack
+                            </GlowButton>
+                          )}
+                          {joinedOrders[battle.id].team === 'blue' && (
+                            <GlowButton variant="outline" size="sm" onClick={() => { simulateAction(battle.id, 'defend'); const b = battles.find(b=>b.id===battle.id); if(b) checkForVictory(b); }}>
+                              Defend
+                            </GlowButton>
+                          )}
+                        </div>
+                      ) : (
+                        <GlowButton 
+                          variant="primary"
+                          onClick={() => handleJoinBattle(battle)}
+                        >
+                          Join Battle
+                        </GlowButton>
+                      )}
                     </div>
                   </GlowCard>
                 </motion.div>
@@ -319,14 +384,7 @@ const Battle = () => {
             </h2>
             
             <div className="grid md:grid-cols-2 gap-6">
-              {loading ? (
-                Array.from({ length: 2 }).map((_, i) => (
-                  <div key={i}><Skeleton className="h-40 w-full rounded-lg" /></div>
-                ))
-              ) : error ? (
-                <div className="text-red-500">{error}</div>
-              ) : (
-                upcomingBattles.map((battle, index) => (
+              {upcomingBattles.map((battle, index) => (
                 <motion.div
                   key={battle.id}
                   initial={{ opacity: 0, y: 30 }}
@@ -384,7 +442,7 @@ const Battle = () => {
               <div className="space-y-6 py-4">
                 {/* Selected Team Display */}
                 {selectedBattle && selectedTeams[selectedBattle.id] && (
-                  <div className="text-center">
+                  <div className="text-center space-y-2">
                     <p className="text-muted-foreground mb-2">You are joining as:</p>
                     <Badge 
                       className={`text-lg px-4 py-2 ${
@@ -398,6 +456,13 @@ const Battle = () => {
                         ? selectedBattle.redTeam.name 
                         : selectedBattle.blueTeam.name}
                     </Badge>
+                    <input
+                      type="text"
+                      placeholder="Group name (optional)"
+                      value={groupName}
+                      onChange={e => setGroupName(e.target.value)}
+                      className="w-full border border-border rounded px-3 py-2 mt-2"
+                    />
                   </div>
                 )}
 

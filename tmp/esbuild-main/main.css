@@ -1,0 +1,171 @@
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --background: 222 47% 5%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 47% 5%;
+    --secondary: 262 83% 58%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 47% 12%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 262 83% 58%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 222 47% 15%;
+    --input: 222 47% 15%;
+    --ring: 199 89% 48%;
+    --radius: 0.75rem;
+    --cyber-blue: 199 89% 48%;
+    --cyber-purple: 262 83% 58%;
+    --cyber-red: 0 84% 60%;
+    --cyber-cyan: 187 92% 69%;
+    --cyber-glow: 199 89% 48%;
+    --gradient-cyber:
+      linear-gradient(
+        135deg,
+        hsl(262 83% 58%) 0%,
+        hsl(199 89% 48%) 50%,
+        hsl(0 84% 60%) 100%);
+    --gradient-glow:
+      linear-gradient(
+        135deg,
+        hsl(199 89% 48% / 0.5) 0%,
+        hsl(262 83% 58% / 0.5) 100%);
+    --gradient-card:
+      linear-gradient(
+        145deg,
+        hsl(222 47% 10%) 0%,
+        hsl(222 47% 6%) 100%);
+    --sidebar-background: 222 47% 6%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary-foreground: 222 47% 5%;
+    --sidebar-accent: 262 83% 58%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222 47% 15%;
+    --sidebar-ring: 199 89% 48%;
+  }
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+@layer utilities {
+  .glow-text {
+    text-shadow:
+      0 0 10px hsl(var(--cyber-blue) / 0.8),
+      0 0 20px hsl(var(--cyber-blue) / 0.6),
+      0 0 40px hsl(var(--cyber-blue) / 0.4);
+  }
+  .glow-text-purple {
+    text-shadow:
+      0 0 10px hsl(var(--cyber-purple) / 0.8),
+      0 0 20px hsl(var(--cyber-purple) / 0.6),
+      0 0 40px hsl(var(--cyber-purple) / 0.4);
+  }
+  .glow-box {
+    box-shadow:
+      0 0 15px hsl(var(--cyber-blue) / 0.3),
+      0 0 30px hsl(var(--cyber-blue) / 0.2),
+      inset 0 0 15px hsl(var(--cyber-blue) / 0.1);
+  }
+  .glow-border {
+    border: 1px solid hsl(var(--cyber-blue) / 0.5);
+    box-shadow: 0 0 10px hsl(var(--cyber-blue) / 0.3), inset 0 0 10px hsl(var(--cyber-blue) / 0.1);
+  }
+  .gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+  }
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius) + 1px);
+    background: var(--gradient-cyber);
+    z-index: -1;
+    opacity: 0.5;
+  }
+  .cyber-grid {
+    background-image:
+      linear-gradient(hsl(var(--cyber-blue) / 0.03) 1px, transparent 1px),
+      linear-gradient(
+        90deg,
+        hsl(var(--cyber-blue) / 0.03) 1px,
+        transparent 1px);
+    background-size: 50px 50px;
+  }
+  .animated-gradient {
+    background:
+      linear-gradient(
+        -45deg,
+        hsl(222 47% 5%),
+        hsl(262 83% 10%),
+        hsl(199 89% 10%),
+        hsl(222 47% 5%));
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  @keyframes pulseGlow {
+    0%, 100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+  .pulse-glow {
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+  .scan-line::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background:
+      linear-gradient(
+        90deg,
+        transparent,
+        hsl(var(--cyber-blue) / 0.8),
+        transparent);
+    animation: scanLine 3s linear infinite;
+  }
+  @keyframes scanLine {
+    0% {
+      top: 0;
+    }
+    100% {
+      top: 100%;
+    }
+  }
+}

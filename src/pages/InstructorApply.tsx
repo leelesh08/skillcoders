@@ -35,33 +35,50 @@ const InstructorApply = () => {
   const [step, setStep] = useState(1);
   const totalSteps = 4;
 
-  const [formData, setFormData] = useState({
-    // Step 1: Personal
+  type FormData = {
+    fullName: string;
+    email: string;
+    phone: string;
+    bio: string;
+    qualifications: string;
+    experience: string;
+    selectedExpertise: string[];
+    courseTopics: string;
+    availability: string[];
+    workType: 'part-time' | 'full-time' | '';
+    paymentMethod: string;
+    bankName: string;
+    accountNumber: string;
+    upiId: string;
+    idType: string;
+    idNumber: string;
+    agreeTerms: boolean;
+    agreeCode: boolean;
+  };
+
+  const [formData, setFormData] = useState<FormData>({
     fullName: '',
     email: '',
     phone: '',
     bio: '',
-    // Step 2: Expertise
     qualifications: '',
     experience: '',
-    selectedExpertise: [] as string[],
+    selectedExpertise: [],
     courseTopics: '',
-    // Step 3: Availability & Payment
-    availability: [] as string[],
-    workType: '' as 'part-time' | 'full-time' | '',
+    availability: [],
+    workType: '',
     paymentMethod: '',
     bankName: '',
     accountNumber: '',
     upiId: '',
-    // Step 4: Verification
     idType: '',
     idNumber: '',
     agreeTerms: false,
     agreeCode: false,
   });
 
-  const updateField = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const updateField = <K extends keyof FormData>(field: K, value: FormData[K]) => {
+    setFormData(prev => ({ ...prev, [field]: value } as FormData));
   };
 
   const toggleExpertise = (topic: string) => {
@@ -498,7 +515,7 @@ const InstructorApply = () => {
                     Verified instructors get a badge and higher visibility
                   </p>
                   <div className="grid grid-cols-3 gap-3">
-                    {['Aadhaar', 'PAN Card', 'Passport'].map((type) => (
+                    {['adhara', 'PAN Card', 'Passport'].map((type) => (
                       <button
                         key={type}
                         type="button"

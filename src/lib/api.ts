@@ -1,8 +1,9 @@
 import { auth } from './firebase';
+import type { User } from 'firebase/auth';
 
 async function getIdToken(): Promise<string | null> {
   if (typeof window === 'undefined') return null;
-  const user = auth.currentUser as any;
+  const user = auth.currentUser as User | null;
   if (!user) return null;
   try {
     return await user.getIdToken();
@@ -35,8 +36,8 @@ async function request(path: string, opts: RequestInit = {}) {
 
 export const api = {
   get: (path: string, opts: RequestInit = {}) => request(path, { method: 'GET', ...opts }),
-  post: (path: string, data?: any, opts: RequestInit = {}) => request(path, { method: 'POST', body: data ? JSON.stringify(data) : undefined, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, ...opts }),
-  put: (path: string, data?: any, opts: RequestInit = {}) => request(path, { method: 'PUT', body: data ? JSON.stringify(data) : undefined, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, ...opts }),
+  post: (path: string, data?: unknown, opts: RequestInit = {}) => request(path, { method: 'POST', body: data ? JSON.stringify(data) : undefined, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, ...opts }),
+  put: (path: string, data?: unknown, opts: RequestInit = {}) => request(path, { method: 'PUT', body: data ? JSON.stringify(data) : undefined, headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) }, ...opts }),
   delete: (path: string, opts: RequestInit = {}) => request(path, { method: 'DELETE', ...opts }),
 };
 

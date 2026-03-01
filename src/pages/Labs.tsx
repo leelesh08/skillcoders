@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
 import { Terminal, Server, Monitor, Play, Clock, Shield, Cpu, HardDrive, Zap } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
 import Navbar from '@/components/Navbar';
@@ -10,50 +9,69 @@ import GlowButton from '@/components/GlowButton';
 import AnimatedLabIcon from '@/components/AnimatedLabIcon';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { api } from '@/lib/api';
-import { Skeleton } from '@/components/ui/skeleton';
-import Loading from '@/components/ui/Loading';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 
-type Lab = {
-  id: string | number;
-  name: string;
-  description?: string;
-  icon?: string;
-  specs?: { ram?: string; storage?: string; cpu?: string };
-  difficulty?: string;
-  color?: string;
-  available?: boolean;
-};
-
-const Labs = () => {
-  const [labs, setLabs] = useState<Lab[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    api
-      .get('/labs')
-      .then((data: any) => {
-        if (!mounted) return;
-        setLabs(Array.isArray(data) ? data : []);
-      })
-      .catch((err: any) => {
-        if (!mounted) return;
-        setError(err?.message || String(err));
-      })
-      .finally(() => {
-        if (!mounted) return;
-        setLoading(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
+const labs = [
+  {
+    id: 1,
+    name: 'Kali Linux',
+    description: 'Penetration testing and ethical hacking environment with 600+ security tools.',
+    icon: '🐉',
+    specs: { ram: '4GB', storage: '50GB', cpu: '2 vCPU' },
+    difficulty: 'Intermediate',
+    color: 'blue' as const,
+    available: true,
+  },
+  {
+    id: 2,
+    name: 'Ubuntu Server',
+    description: 'Linux server environment for network administration and security testing.',
+    icon: '🐧',
+    specs: { ram: '2GB', storage: '30GB', cpu: '1 vCPU' },
+    difficulty: 'Beginner',
+    color: 'purple' as const,
+    available: true,
+  },
+  {
+    id: 3,
+    name: 'Windows 7',
+    description: 'Legacy Windows environment for vulnerability research and exploit testing.',
+    icon: '🪟',
+    specs: { ram: '4GB', storage: '40GB', cpu: '2 vCPU' },
+    difficulty: 'Intermediate',
+    color: 'cyan' as const,
+    available: true,
+  },
+  {
+    id: 4,
+    name: 'Windows 10',
+    description: 'Modern Windows desktop for security analysis and malware research.',
+    icon: '🖥️',
+    specs: { ram: '8GB', storage: '60GB', cpu: '4 vCPU' },
+    difficulty: 'Intermediate',
+    color: 'blue' as const,
+    available: true,
+  },
+  {
+    id: 5,
+    name: 'Windows Server',
+    description: 'Enterprise server environment for Active Directory and network security labs.',
+    icon: '🏢',
+    specs: { ram: '8GB', storage: '80GB', cpu: '4 vCPU' },
+    difficulty: 'Advanced',
+    color: 'red' as const,
+    available: true,
+  },
+  {
+    id: 6,
+    name: 'Parrot OS',
+    description: 'Security-focused OS with tools for penetration testing and forensics.',
+    icon: '🦜',
+    specs: { ram: '4GB', storage: '50GB', cpu: '2 vCPU' },
+    difficulty: 'Advanced',
+    color: 'cyan' as const,
+    available: true,
+  },
+];
 
 const difficultyColors = {
   Beginner: 'bg-green-500/10 text-green-500 border-green-500/30',
@@ -61,9 +79,7 @@ const difficultyColors = {
   Advanced: 'bg-red-500/10 text-red-500 border-red-500/30',
 };
 
-  if (loading) return <Loading message="Loading labs..." />;
-  if (error) return <ErrorMessage message={error} />;
-
+const Labs = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       <ParticleBackground />
@@ -121,21 +137,8 @@ const difficultyColors = {
           </motion.div>
 
           {/* Labs Grid */}
-          {loading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i}>
-                  <Skeleton className="h-56 w-full rounded-lg" />
-                  <Skeleton className="h-6 mt-3 w-3/4" />
-                  <Skeleton className="h-4 mt-2 w-1/2" />
-                </div>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="text-center text-red-500">{error}</div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {labs.map((lab, index) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {labs.map((lab, index) => (
               <motion.div
                 key={lab.id}
                 initial={{ opacity: 0, y: 30 }}
@@ -168,17 +171,17 @@ const difficultyColors = {
                     <div className="bg-background/50 rounded-lg p-2 text-center">
                       <Cpu className="w-4 h-4 text-primary mx-auto mb-1" />
                       <p className="text-xs text-muted-foreground">CPU</p>
-                      <p className="text-sm font-medium">{lab.specs?.cpu}</p>
+                      <p className="text-sm font-medium">{lab.specs.cpu}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-2 text-center">
                       <Monitor className="w-4 h-4 text-primary mx-auto mb-1" />
                       <p className="text-xs text-muted-foreground">RAM</p>
-                      <p className="text-sm font-medium">{lab.specs?.ram}</p>
+                      <p className="text-sm font-medium">{lab.specs.ram}</p>
                     </div>
                     <div className="bg-background/50 rounded-lg p-2 text-center">
                       <HardDrive className="w-4 h-4 text-primary mx-auto mb-1" />
                       <p className="text-xs text-muted-foreground">Storage</p>
-                      <p className="text-sm font-medium">{lab.specs?.storage}</p>
+                      <p className="text-sm font-medium">{lab.specs.storage}</p>
                     </div>
                   </div>
 
@@ -198,7 +201,7 @@ const difficultyColors = {
           </div>
         </div>
       </main>
-      <Footer />
+     <Footer />
     </div>
   );
 };

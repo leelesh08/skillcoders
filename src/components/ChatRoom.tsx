@@ -31,7 +31,7 @@ interface ChatGroup {
 interface ChatRoomProps {
   isOpen: boolean;
   onClose: () => void;
-  userRole?: 'student' | 'teacher' | 'client';
+  userRole?: 'student' | 'teacher';
   currentUsername?: string;
   meetingId?: string;
 }
@@ -98,7 +98,7 @@ const sampleMessages: Message[] = [
 const sampleGroups: ChatGroup[] = [
   { id: '1', name: 'Web Security Class', members: ['teacher1', 'student1', 'student2'], createdBy: 'teacher1', type: 'class' },
   { id: '2', name: 'Network Security Doubts', members: ['teacher2', 'student1', 'student3'], createdBy: 'teacher2', type: 'doubt' },
-  { id: '3', name: 'General Discussion', members: ['student1', 'student2', 'student3', 'client1'], createdBy: 'student1', type: 'general' },
+  { id: '3', name: 'General Discussion', members: ['student1', 'student2', 'student3'], createdBy: 'student1', type: 'general' },
 ];
 
 const ChatRoom = ({ isOpen, onClose, userRole = 'student', currentUsername = 'CurrentUser', meetingId }: ChatRoomProps) => {

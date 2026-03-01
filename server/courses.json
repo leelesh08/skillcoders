@@ -1,0 +1,87 @@
+[
+  {
+    "id": "c_1",
+    "title": "Practical Web Application Security",
+    "instructor": "Jane Doe",
+    "rating": 4.8,
+    "students": 1240,
+    "duration": "6h 30m",
+    "price": 999,
+    "image": "https://picsum.photos/800/400?random=1",
+    "level": "Intermediate",
+    "category": "Web Security"
+  },
+  {
+    "id": "c_2",
+    "title": "Intro to Penetration Testing",
+    "instructor": "John Smith",
+    "rating": 4.6,
+    "students": 890,
+    "duration": "4h 15m",
+    "price": 499,
+    "image": "https://picsum.photos/800/400?random=2",
+    "level": "Beginner",
+    "category": "Penetration Testing"
+  },
+  {
+    "id": "c_3",
+    "title": "Cloud Security Fundamentals",
+    "instructor": "Aisha Khan",
+    "rating": 4.7,
+    "students": 670,
+    "duration": "5h 0m",
+    "price": 799,
+    "image": "https://picsum.photos/800/400?random=3",
+    "level": "Beginner",
+    "category": "Cloud Security"
+  }
+  ,
+  {
+    "id": "c_4",
+    "title": "Advanced Malware Analysis",
+    "instructor": "Carlos Mendes",
+    "rating": 4.9,
+    "students": 420,
+    "duration": "7h 10m",
+    "price": 1299,
+    "image": "https://picsum.photos/800/400?random=4",
+    "level": "Advanced",
+    "category": "Malware Analysis"
+  },
+  {
+    "id": "c_5",
+    "title": "Bug Bounty Masterclass",
+    "instructor": "Lena Roy",
+    "rating": 4.7,
+    "students": 980,
+    "duration": "6h 0m",
+    "price": 899,
+    "image": "https://picsum.photos/800/400?random=5",
+    "level": "Intermediate",
+    "category": "Bug Bounty"
+  },
+  {
+    "id": "c_6",
+    "title": "Network Security Deep Dive",
+    "instructor": "Dr. Wei Zhang",
+    "rating": 4.6,
+    "students": 540,
+    "duration": "8h 30m",
+    "price": 1099,
+    "image": "https://picsum.photos/800/400?random=6",
+    "level": "Advanced",
+    "category": "Network Security"
+  },
+  {
+    "id": "c_7",
+    "title": "Secure Cloud Architecture",
+    "instructor": "Maya Patel",
+    "rating": 4.8,
+    "students": 760,
+    "duration": "5h 45m",
+    "price": 1199,
+    "image": "https://picsum.photos/800/400?random=7",
+    "level": "Intermediate",
+    "category": "Cloud Security"
+  }
+]

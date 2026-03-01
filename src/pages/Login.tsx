@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft, Phone } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
 import GlowButton from '@/components/GlowButton';
 import GlowText from '@/components/GlowText';
@@ -9,8 +9,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
-import { auth } from '@/lib/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, signInWithGooglePopup, signInWithGoogleRedirect, signInWithGithubPopup, signInWithGithubRedirect } from '@/lib/firebase';
+import { signInWithEmailAndPassword, signInWithPhoneNumber, RecaptchaVerifier, ConfirmationResult } from 'firebase/auth';
+
+// Type declaration for recaptchaVerifier on window
+declare global {
+  interface Window {
+    recaptchaVerifier?: RecaptchaVerifier;
+  }
+}
 
 const socialProviders = [
   {
@@ -62,16 +69,136 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [authMethod, setAuthMethod] = useState<'email' | 'phone'>('email');
+  const [verificationStep, setVerificationStep] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    if (authMethod === 'email') {
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        const idToken = await cred.user.getIdToken();
+
+        const apiUrl = import.meta.env.VITE_API_URL ?? '';
+        const resp = await fetch(`${apiUrl}/verifyToken`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (!resp.ok) {
+          const body = await resp.json().catch(() => ({}));
+          throw new Error(body?.error || `Verification failed: ${resp.status}`);
+        }
+
+        const data = await resp.json();
+        console.log('Verified token:', data);
+        navigate('/');
+      } catch (err: unknown) {
+        console.error(err);
+        let msg = 'Login failed';
+        if (err && typeof err === 'object' && 'message' in err) {
+          const m = (err as { message?: unknown }).message;
+          msg = typeof m === 'string' ? m : String(m);
+        } else {
+          msg = String(err);
+        }
+        setError(msg);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Phone login
+      try {
+        // Setup reCAPTCHA verifier
+        if (!window.recaptchaVerifier) {
+          window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response: string) => {
+              console.log('reCAPTCHA verified:', response);
+            }
+          });
+        }
+
+        const appVerifier = window.recaptchaVerifier;
+        const phoneNumber = phone.startsWith('+') ? phone : '+91' + phone;
+
+        const confirmation = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+        setConfirmationResult(confirmation);
+        setVerificationStep(true);
+        setError(null);
+      } catch (err: unknown) {
+        console.error('Phone sign-in error', err);
+        const code = (err as { code?: string })?.code;
+        let msg = 'Failed to send verification code';
+        if (code === 'auth/billing-not-enabled') {
+          msg = 'Phone authentication requires a Firebase billing plan. Add a credit card in the Firebase console or use a test phone number.';
+        } else if (err && typeof err === 'object' && 'message' in err) {
+          const m = (err as { message?: unknown }).message;
+          msg = typeof m === 'string' ? m : String(m);
+        } else {
+          msg = String(err);
+        }
+        setError(msg);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleOtpVerification = async () => {
+    setError(null);
+    setLoading(true);
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, password);
+      if (!confirmationResult) {
+        throw new Error('No confirmation result found');
+      }
+
+      const result = await confirmationResult.confirm(otp);
+      const idToken = await result.user.getIdToken();
+
+      const apiUrl = import.meta.env.VITE_API_URL ?? '';
+      const resp = await fetch(`${apiUrl}/verifyToken`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body?.error || `Verification failed: ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      console.log('Phone login verified:', data);
+      navigate('/');
+    } catch (err: unknown) {
+      console.error('OTP verification error', err);
+      let msg = 'Invalid verification code';
+      if (err && typeof err === 'object' && 'message' in err) {
+        const m = (err as { message?: unknown }).message;
+        msg = typeof m === 'string' ? m : String(m);
+      }
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const cred = await signInWithGooglePopup();
       const idToken = await cred.user.getIdToken();
 
       const apiUrl = import.meta.env.VITE_API_URL ?? '';
@@ -87,11 +214,75 @@ const Login = () => {
       }
 
       const data = await resp.json();
-      console.log('Verified token:', data);
+      console.log('Verified token (google):', data);
       navigate('/');
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Login failed');
+    } catch (err: unknown) {
+      console.error('Google sign-in error', err);
+      const code = (err as { code?: string })?.code;
+      // If popup was cancelled, blocked, or not supported, fallback to redirect flow
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user' || code === 'auth/popup-blocked' || code === 'auth/web-storage-unsupported') {
+        try {
+          console.log('Popup blocked or unsupported, using redirect flow...');
+          await signInWithGoogleRedirect();
+          return; // redirect will occur
+        } catch (e2) {
+          console.error('Redirect fallback failed', e2);
+        }
+      }
+      let msg = 'Google sign-in failed';
+      if (err && typeof err === 'object' && 'message' in err) {
+        const m = (err as { message?: unknown }).message;
+        msg = typeof m === 'string' ? m : String(m);
+      } else {
+        msg = String(err);
+      }
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGithubSignIn = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const cred = await signInWithGithubPopup();
+      const idToken = await cred.user.getIdToken();
+
+      const apiUrl = import.meta.env.VITE_API_URL ?? '';
+      const resp = await fetch(`${apiUrl}/verifyToken`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body?.error || `Verification failed: ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      console.log('Verified token (github):', data);
+      navigate('/');
+    } catch (err: unknown) {
+      console.error('GitHub sign-in error', err);
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/cancelled-popup-request' || code === 'auth/popup-closed-by-user' || code === 'auth/popup-blocked' || code === 'auth/web-storage-unsupported') {
+        try {
+          await signInWithGithubRedirect();
+          return;
+        } catch (e2) {
+          console.error('GitHub redirect fallback failed', e2);
+        }
+      }
+      let msg = 'GitHub sign-in failed';
+      if (err && typeof err === 'object' && 'message' in err) {
+        const m = (err as { message?: unknown }).message;
+        msg = typeof m === 'string' ? m : String(m);
+      } else {
+        msg = String(err);
+      }
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -133,8 +324,13 @@ const Login = () => {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="bg-card/80 backdrop-blur-xl rounded-2xl border border-border p-8 glow-border"
+            className="relative bg-card/80 backdrop-blur-xl rounded-2xl border border-border p-8 glow-border"
           >
+            {loading && (
+              <div className="absolute inset-0 bg-black/30 rounded-2xl flex items-center justify-center z-50">
+                <div className="w-12 h-12 border-4 border-t-transparent border-white rounded-full animate-spin" role="status" aria-label="Loading" />
+              </div>
+            )}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
               <p className="text-muted-foreground">Sign in to continue your learning journey</p>
@@ -150,7 +346,10 @@ const Login = () => {
                   transition={{ delay: 0.2 + index * 0.1 }}
                   whileHover={{ scale: 1.02, x: 5 }}
                   whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-border bg-background/50 transition-all duration-300 ${provider.color}`}
+                  onClick={provider.name === 'Google' ? handleGoogleSignIn : provider.name === 'GitHub' ? handleGithubSignIn : undefined}
+                  disabled={loading}
+                  aria-disabled={loading}
+                  className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded-lg border border-border bg-background/50 transition-all duration-300 ${provider.color} ${loading ? 'opacity-50 pointer-events-none' : ''}`}
                 >
                   {provider.icon}
                   <span className="font-medium">Continue with {provider.name}</span>
@@ -161,102 +360,264 @@ const Login = () => {
             <div className="relative my-6">
               <Separator className="bg-border" />
               <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-4 text-sm text-muted-foreground">
-                or continue with email
+                or sign in another way
               </span>
             </div>
 
+            {/* Email/Phone Tab */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35 }}
+              className="flex gap-2 mb-6 bg-background/30 p-1 rounded-lg"
+            >
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMethod('email');
+                  setVerificationStep(false);
+                  setOtp('');
+                }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'email'
+                    ? 'bg-primary/20 text-primary font-medium'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }`}
+              >
+                <Mail className="w-4 h-4" />
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMethod('phone');
+                  setVerificationStep(false);
+                  setOtp('');
+                  setConfirmationResult(null);
+                  setError(null);
+                }}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'phone'
+                    ? 'bg-primary/20 text-primary font-medium'
+                    : 'text-muted-foreground hover:text-foreground'
+                  }`}
+              >
+                <Phone className="w-4 h-4" />
+                Phone
+              </button>
+            </motion.div>
+
             {/* Email/Password Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Label htmlFor="email" className="text-sm font-medium">
-                  Email Address
-                </Label>
-                <div className="relative mt-2">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="you@example.com"
-                    className="pl-10 bg-background/50 border-border focus:border-primary"
-                  />
-                </div>
-              </motion.div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (verificationStep) {
+                handleOtpVerification();
+              } else {
+                handleSubmit(e);
+              }
+            }} className="space-y-4">
+              {!verificationStep ? (
+                <>
+                  {authMethod === 'email' ? (
+                    <>
+                      {/* Email Field */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <Label htmlFor="email" className="text-sm font-medium">
+                          Email Address
+                        </Label>
+                        <div className="relative mt-2">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Input
+                            id="email"
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="you@example.com"
+                            className="pl-10 bg-background/50 border-border focus:border-primary"
+                            required
+                          />
+                        </div>
+                      </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <Label htmlFor="password" className="text-sm font-medium">
-                  Password
-                </Label>
-                <div className="relative mt-2">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="pl-10 pr-10 bg-background/50 border-border focus:border-primary"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      {/* Password Field */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                      >
+                        <Label htmlFor="password" className="text-sm font-medium">
+                          Password
+                        </Label>
+                        <div className="relative mt-2">
+                          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                          <Input
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••••••"
+                            className="pl-10 pr-10 bg-background/50 border-border focus:border-primary"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          >
+                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                          </button>
+                        </div>
+                      </motion.div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Phone Number Field */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4 }}
+                      >
+                        <Label htmlFor="phone" className="text-sm font-medium">
+                          Phone Number
+                        </Label>
+                        <div className="relative mt-2">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-sm select-none">+91</span>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                            placeholder="9876543210"
+                            maxLength={10}
+                            className="pl-12 bg-background/50 border-border focus:border-primary"
+                            required
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">Enter 10-digit mobile number</p>
+                      </motion.div>
+                    </>
+                  )}
+
+                  {/* Terms & Forgot Password */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: authMethod === 'email' ? 0.6 : 0.5 }}
+                    className="space-y-3"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-              </motion.div>
+                    {authMethod === 'email' && (
+                      <div className="flex items-center justify-between text-sm">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" className="rounded border-border" />
+                          <span className="text-muted-foreground">Remember me</span>
+                        </label>
+                        <Link to="/forgot-password" className="text-primary hover:underline">
+                          Forgot password?
+                        </Link>
+                      </div>
+                    )}
+                    <div className="flex items-start gap-2">
+                      <input type="checkbox" id="login-terms" className="mt-1 rounded border-border" required />
+                      <label htmlFor="login-terms" className="text-xs text-muted-foreground">
+                        By signing in, I agree to the{' '}
+                        <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
+                        {' '}and{' '}
+                        <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
+                      </label>
+                    </div>
+                  </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-                className="space-y-3"
-              >
-                <div className="flex items-center justify-between text-sm">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input type="checkbox" className="rounded border-border" />
-                    <span className="text-muted-foreground">Remember me</span>
-                  </label>
-                  <Link to="/forgot-password" className="text-primary hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
-                <div className="flex items-start gap-2">
-                  <input type="checkbox" id="login-terms" className="mt-1 rounded border-border" required />
-                  <label htmlFor="login-terms" className="text-xs text-muted-foreground">
-                    By signing in, I agree to the{' '}
-                    <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
-                    {' '}and{' '}
-                    <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
-                  </label>
-                </div>
-              </motion.div>
+                  {error && <p className="text-sm text-destructive mt-3">{error}</p>}
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-              >
-                <GlowButton type="submit" variant="primary" size="lg" className="w-full">
-                  <span className="flex items-center justify-center gap-2">
-                    Sign In
-                    <ArrowRight className="w-5 h-5" />
-                  </span>
-                </GlowButton>
-                {error && <p className="text-sm text-destructive mt-2">{error}</p>}
-                {loading && <p className="text-sm text-muted-foreground mt-2">Signing in…</p>}
-              </motion.div>
+                  {/* Submit Button */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: authMethod === 'email' ? 0.7 : 0.6 }}
+                  >
+                    <GlowButton type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
+                      <span className="flex items-center justify-center gap-2">
+                        Sign In
+                        <ArrowRight className="w-5 h-5" />
+                      </span>
+                    </GlowButton>
+                  </motion.div>
+                </>
+              ) : (
+                /* OTP Verification Step */
+                <>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center mb-6"
+                  >
+                    <h2 className="text-2xl font-bold mb-2">Verify Phone Number</h2>
+                    <p className="text-muted-foreground">
+                      Enter the 6-digit code sent to +91{phone}
+                    </p>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <Label htmlFor="otp" className="text-sm font-medium">
+                      Verification Code
+                    </Label>
+                    <Input
+                      id="otp"
+                      type="text"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      placeholder="000000"
+                      maxLength={6}
+                      className="mt-2 text-center text-2xl tracking-widest bg-background/50 border-border focus:border-primary"
+                    />
+                  </motion.div>
+
+                  {error && <p className="text-sm text-destructive mt-3">{error}</p>}
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                  >
+                    <GlowButton
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      disabled={loading || otp.length !== 6}
+                      type="submit"
+                    >
+                      Verify & Sign In
+                    </GlowButton>
+                  </motion.div>
+
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    type="button"
+                    onClick={() => {
+                      setVerificationStep(false);
+                      setOtp('');
+                      setError(null);
+                      setConfirmationResult(null);
+                    }}
+                    className="w-full text-center text-sm text-primary hover:underline mt-4"
+                  >
+                    Change phone number
+                  </motion.button>
+                </>
+              )}
+
             </form>
+
+            {/* reCAPTCHA Container */}
+            <div id="recaptcha-container" className="mt-4" />
 
             <motion.p
               initial={{ opacity: 0 }}

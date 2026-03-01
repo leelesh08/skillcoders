@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/CartContext';
+import { ShoppingCart } from 'lucide-react';
 import scLogo from '@/assets/sc_logo.png';
 import { auth } from '@/lib/firebase';
 import { onIdTokenChanged, getIdTokenResult } from 'firebase/auth';
@@ -22,6 +24,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
+  const { items } = useCart();
 
   useEffect(() => {
     let mounted = true;
@@ -112,6 +115,26 @@ const Navbar = () => {
                 </motion.div>
               </Link>
             )}
+            {isAdmin && (
+              <Link to="/admin/audits">
+                <motion.div
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === '/admin/audits' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Audits
+                </motion.div>
+              </Link>
+            )}
+            <Link to="/cart">
+              <motion.div className="px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2">
+                <ShoppingCart className="w-5 h-5" />
+                <span className="hidden sm:inline">Cart</span>
+                <span className="ml-1 inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium rounded-full bg-primary text-primary-foreground">{String(items?.length || 0)}</span>
+              </motion.div>
+            </Link>
           </div>
 
           {/* Auth Buttons */}
@@ -187,6 +210,31 @@ const Navbar = () => {
                   </Link>
                 </motion.div>
               )}
+              {isAdmin && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                >
+                  <Link
+                    to="/admin/audits"
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === '/admin/audits' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted'
+                    }`}
+                  >
+                    Audits
+                  </Link>
+                </motion.div>
+              )}
+
+              <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+                <Link to="/cart" onClick={() => setIsOpen(false)} className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/cart' ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
+                  <div className="flex items-center gap-2">
+                    <ShoppingCart className="w-4 h-4" />
+                    <span>Cart</span>
+                  </div>
+                </Link>
+              </motion.div>
 
               <div className="pt-4 space-y-2 border-t border-border">
                 <Link to="/login" onClick={() => setIsOpen(false)}>

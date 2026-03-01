@@ -1,0 +1,2 @@
+Stripe secret key not provided or mock detected — running in MOCK stripe mode.
+Stripe example server listening on http://localhost:8085

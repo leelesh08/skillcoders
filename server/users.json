@@ -1,0 +1,18 @@
+[
+  {
+    "id": "u_test_1",
+    "email": "test+admin@example.com",
+    "displayName": "Test Admin",
+    "roles": [
+      "admin"
+    ]
+  },
+  {
+    "id": "u_test_2",
+    "email": "user2@example.com",
+    "name": "User Two",
+    "roles": [
+      "admin"
+    ]
+  }
+]

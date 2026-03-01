@@ -1,0 +1,664 @@
+extend type Mutation {
+  """
+  ✨ Insert a single `LearningModule` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  learningModule_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: LearningModule_Data!
+  ): LearningModule_KeyOutput! @fdc_generated(from: "LearningModule", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Note` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  note_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Note_Data!
+  ): Note_KeyOutput! @fdc_generated(from: "Note", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Project` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  project_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Project_Data!
+  ): Project_KeyOutput! @fdc_generated(from: "Project", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `Task` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  task_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: Task_Data!
+  ): Task_KeyOutput! @fdc_generated(from: "Task", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `User` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert a single `UserLearningProgress` into the table and return its key. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userLearningProgress_insert(
+    """
+    Data object to insert into the table.
+    """
+    data: UserLearningProgress_Data!
+  ): UserLearningProgress_KeyOutput! @fdc_generated(from: "UserLearningProgress", purpose: INSERT_SINGLE)
+  """
+  ✨ Insert `LearningModule` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  learningModule_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [LearningModule_Data!]!
+  ): [LearningModule_KeyOutput!]! @fdc_generated(from: "LearningModule", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Note` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  note_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Note_Data!]!
+  ): [Note_KeyOutput!]! @fdc_generated(from: "Note", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Project` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  project_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Project_Data!]!
+  ): [Project_KeyOutput!]! @fdc_generated(from: "Project", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `Task` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  task_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [Task_Data!]!
+  ): [Task_KeyOutput!]! @fdc_generated(from: "Task", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `User` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  user_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert `UserLearningProgress` objects into the table and return their keys. Columns not specified in `data` will receive defaults (e.g. `null`).
+  """
+  userLearningProgress_insertMany(
+    """
+    List of data objects to insert into the table.
+    """
+    data: [UserLearningProgress_Data!]!
+  ): [UserLearningProgress_KeyOutput!]! @fdc_generated(from: "UserLearningProgress", purpose: INSERT_MULTIPLE)
+  """
+  ✨ Insert or update a single `LearningModule` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LearningModule`.
+  """
+  learningModule_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: LearningModule_Data!
+  ): LearningModule_KeyOutput! @fdc_generated(from: "LearningModule", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Note` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Note`.
+  """
+  note_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Note_Data!
+  ): Note_KeyOutput! @fdc_generated(from: "Note", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Project` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Project`.
+  """
+  project_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Project_Data!
+  ): Project_KeyOutput! @fdc_generated(from: "Project", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `Task` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Task`.
+  """
+  task_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: Task_Data!
+  ): Task_KeyOutput! @fdc_generated(from: "Task", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `User` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: User_Data!
+  ): User_KeyOutput! @fdc_generated(from: "User", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update a single `UserLearningProgress` into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserLearningProgress`.
+  """
+  userLearningProgress_upsert(
+    """
+    Data object to insert or update if it already exists.
+    """
+    data: UserLearningProgress_Data!
+  ): UserLearningProgress_KeyOutput! @fdc_generated(from: "UserLearningProgress", purpose: UPSERT_SINGLE)
+  """
+  ✨ Insert or update `LearningModule` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `LearningModule`.
+  """
+  learningModule_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [LearningModule_Data!]!
+  ): [LearningModule_KeyOutput!]! @fdc_generated(from: "LearningModule", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Note` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Note`.
+  """
+  note_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Note_Data!]!
+  ): [Note_KeyOutput!]! @fdc_generated(from: "Note", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Project` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Project`.
+  """
+  project_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Project_Data!]!
+  ): [Project_KeyOutput!]! @fdc_generated(from: "Project", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `Task` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `Task`.
+  """
+  task_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [Task_Data!]!
+  ): [Task_KeyOutput!]! @fdc_generated(from: "Task", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `User` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `User`.
+  """
+  user_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [User_Data!]!
+  ): [User_KeyOutput!]! @fdc_generated(from: "User", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Insert or update `UserLearningProgress` objects into the table, based on the primary key. Returns the key of the newly inserted or existing updated `UserLearningProgress`.
+  """
+  userLearningProgress_upsertMany(
+    """
+    List of data objects to insert or update if it already exists.
+    """
+    data: [UserLearningProgress_Data!]!
+  ): [UserLearningProgress_KeyOutput!]! @fdc_generated(from: "UserLearningProgress", purpose: UPSERT_MULTIPLE)
+  """
+  ✨ Update a single `LearningModule` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `LearningModule` or `null` if not found.
+  """
+  learningModule_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LearningModule_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LearningModule_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: LearningModule_Data!
+  ): LearningModule_KeyOutput @fdc_generated(from: "LearningModule", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Note` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Note` or `null` if not found.
+  """
+  note_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Note_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Note_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Note_Data!
+  ): Note_KeyOutput @fdc_generated(from: "Note", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Project` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Project` or `null` if not found.
+  """
+  project_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Project_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Project_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Project_Data!
+  ): Project_KeyOutput @fdc_generated(from: "Project", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `Task` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `Task` or `null` if not found.
+  """
+  task_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Task_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Task_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: Task_Data!
+  ): Task_KeyOutput @fdc_generated(from: "Task", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `User` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `User` or `null` if not found.
+  """
+  user_update(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: User_Data!
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update a single `UserLearningProgress` based on `id`, `key` or `first`, setting columns specified in `data`. Returns the key of the updated `UserLearningProgress` or `null` if not found.
+  """
+  userLearningProgress_update(
+    """
+    The key used to identify the object.
+    """
+    key: UserLearningProgress_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserLearningProgress_FirstRow
+
+    """
+    Data object containing fields to be updated.
+    """
+    data: UserLearningProgress_Data!
+  ): UserLearningProgress_KeyOutput @fdc_generated(from: "UserLearningProgress", purpose: UPDATE_SINGLE)
+  """
+  ✨ Update `LearningModule` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  learningModule_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: LearningModule_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: LearningModule_Data!
+  ): Int! @fdc_generated(from: "LearningModule", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Note` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  note_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Note_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Note_Data!
+  ): Int! @fdc_generated(from: "Note", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Project` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  project_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Project_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Project_Data!
+  ): Int! @fdc_generated(from: "Project", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `Task` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  task_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: Task_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: Task_Data!
+  ): Int! @fdc_generated(from: "Task", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `User` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  user_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: User_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: User_Data!
+  ): Int! @fdc_generated(from: "User", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Update `UserLearningProgress` objects matching `where` conditions (or `all`, if true) according to `data`. Returns the number of rows updated.
+  """
+  userLearningProgress_updateMany(
+    """
+    Filter condition to specify which rows to update.
+    """
+    where: UserLearningProgress_Filter
+
+    """
+    Set to true to update all rows.
+    """
+    all: Boolean = false
+
+    """
+    Data object containing fields to update.
+    """
+    data: UserLearningProgress_Data!
+  ): Int! @fdc_generated(from: "UserLearningProgress", purpose: UPDATE_MULTIPLE)
+  """
+  ✨ Delete a single `LearningModule` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  learningModule_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: LearningModule_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: LearningModule_FirstRow
+  ): LearningModule_KeyOutput @fdc_generated(from: "LearningModule", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Note` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  note_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Note_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Note_FirstRow
+  ): Note_KeyOutput @fdc_generated(from: "Note", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Project` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  project_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Project_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Project_FirstRow
+  ): Project_KeyOutput @fdc_generated(from: "Project", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `Task` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  task_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: Task_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: Task_FirstRow
+  ): Task_KeyOutput @fdc_generated(from: "Task", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `User` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  user_delete(
+    """
+    The unique ID of the object.
+    """
+    id: UUID
+
+    """
+    The key used to identify the object.
+    """
+    key: User_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: User_FirstRow
+  ): User_KeyOutput @fdc_generated(from: "User", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete a single `UserLearningProgress` based on `id`, `key` or `first` and return its key (or `null` if not found).
+  """
+  userLearningProgress_delete(
+    """
+    The key used to identify the object.
+    """
+    key: UserLearningProgress_Key
+
+    """
+    Fetch the first row based on the filters and ordering.
+    """
+    first: UserLearningProgress_FirstRow
+  ): UserLearningProgress_KeyOutput @fdc_generated(from: "UserLearningProgress", purpose: DELETE_SINGLE)
+  """
+  ✨ Delete `LearningModule` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  learningModule_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: LearningModule_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "LearningModule", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Note` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  note_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Note_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Note", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Project` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  project_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Project_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Project", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `Task` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  task_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: Task_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "Task", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `User` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  user_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: User_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "User", purpose: DELETE_MULTIPLE)
+  """
+  ✨ Delete `UserLearningProgress` objects matching `where` conditions (or `all`, if true). Returns the number of rows deleted.
+  """
+  userLearningProgress_deleteMany(
+    """
+    Filter condition to specify which rows to delete.
+    """
+    where: UserLearningProgress_Filter
+
+    """
+    Set to true to delete all rows.
+    """
+    all: Boolean = false
+  ): Int! @fdc_generated(from: "UserLearningProgress", purpose: DELETE_MULTIPLE)
+}

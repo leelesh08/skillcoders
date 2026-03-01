@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Video, Calendar, Clock, Users, MessageCircle, ExternalLink, BookOpen, Briefcase, Plus } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
@@ -12,10 +12,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import MeetingScheduler from '@/components/MeetingScheduler';
 import ChatRoom from '@/components/ChatRoom';
-import { api } from '@/lib/api';
-import { Skeleton } from '@/components/ui/skeleton';
-import Loading from '@/components/ui/Loading';
-import ErrorMessage from '@/components/ui/ErrorMessage';
 
 interface Meeting {
   id: string;
@@ -32,7 +28,7 @@ interface Meeting {
   isLive: boolean;
 }
 
-const upcomingMeetingsConst: Meeting[] = [
+const upcomingMeetings: Meeting[] = [
   {
     id: '1',
     title: 'Web Security Fundamentals',
@@ -77,7 +73,7 @@ const upcomingMeetingsConst: Meeting[] = [
   },
 ];
 
-const clientMeetingsConst: Meeting[] = [
+const clientMeetings: Meeting[] = [
   {
     id: '4',
     title: 'Security Audit - ABC Corp',
@@ -113,31 +109,6 @@ const Meetings = () => {
   const [showChatRoom, setShowChatRoom] = useState(false);
   const [selectedMeetingId, setSelectedMeetingId] = useState<string | null>(null);
   const [userRole] = useState<'student' | 'instructor' | 'client'>('student');
-  const [upcomingMeetings, setUpcomingMeetings] = useState<Meeting[]>(upcomingMeetingsConst);
-  const [clientMeetings, setClientMeetings] = useState<Meeting[]>(clientMeetingsConst);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    Promise.all([api.get('/meetings?type=class').catch(() => null), api.get('/meetings?type=client').catch(() => null)])
-      .then(([classes, clients]) => {
-        if (!mounted) return;
-        if (Array.isArray(classes)) setUpcomingMeetings(classes);
-        if (Array.isArray(clients)) setClientMeetings(clients);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err?.message || String(err));
-      })
-      .finally(() => {
-        if (!mounted) return;
-        setLoading(false);
-      });
-
-    return () => { mounted = false; };
-  }, []);
 
   const handleOpenChat = (meetingId: string) => {
     setSelectedMeetingId(meetingId);
@@ -296,56 +267,33 @@ const Meetings = () => {
             </TabsList>
 
             <TabsContent value="classes">
-    if (loading) return <Loading message="Loading meetings..." />;
-    if (error) return <ErrorMessage message={error} />;
-
-              {loading ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i}><Skeleton className="h-56 w-full rounded-lg" /><Skeleton className="h-6 mt-3 w-3/4" /></div>
-                  ))}
-                </div>
-              ) : error ? (
-                <div className="text-center text-red-500">{error}</div>
-              ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {upcomingMeetings.map((meeting, index) => (
-                    <motion.div
-                      key={meeting.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <MeetingCard meeting={meeting} />
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {upcomingMeetings.map((meeting, index) => (
+                  <motion.div
+                    key={meeting.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <MeetingCard meeting={meeting} />
+                  </motion.div>
+                ))}
+              </div>
             </TabsContent>
 
             <TabsContent value="clients">
-              {loading ? (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i}><Skeleton className="h-56 w-full rounded-lg" /><Skeleton className="h-6 mt-3 w-3/4" /></div>
-                  ))}
-                </div>
-              ) : error ? (
-                <div className="text-center text-red-500">{error}</div>
-              ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {clientMeetings.map((meeting, index) => (
-                    <motion.div
-                      key={meeting.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                    >
-                      <MeetingCard meeting={meeting} />
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {clientMeetings.map((meeting, index) => (
+                  <motion.div
+                    key={meeting.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <MeetingCard meeting={meeting} />
+                  </motion.div>
+                ))}
+              </div>
             </TabsContent>
           </Tabs>
 
@@ -402,7 +350,7 @@ const Meetings = () => {
       <ChatRoom
         isOpen={showChatRoom}
         onClose={() => setShowChatRoom(false)}
-        userRole={userRole === 'instructor' ? 'teacher' : userRole}
+        userRole={userRole === 'instructor' ? 'teacher' : userRole === 'client' ? 'student' : userRole}
         currentUsername="CurrentUser"
         meetingId={selectedMeetingId || undefined}
       />

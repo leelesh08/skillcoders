@@ -23,8 +23,8 @@ const featuresConst = [
   },
   {
     icon: Trophy,
-    title: 'Live Battles',
-    description: 'Join Red vs Blue team battles and test your skills in real-time.',
+    title: 'Battles',
+    description: 'Join Red vs Blue team battles, form groups, and compete for certificates and prize pools.',
     color: 'red' as const,
   },
   {
@@ -114,7 +114,7 @@ const Index = () => {
 
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Join thousands of students learning ethical hacking, penetration testing, 
-              and cybersecurity through hands-on labs, live battles, and expert-led courses.
+              and cybersecurity through hands-on labs, exciting battles (win certificates and prizes), and expert-led courses.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -233,19 +233,20 @@ const Index = () => {
                   'Build your personal brand',
                   'Flexible working hours',
                 ].map((item, index) => (
-                  <motion.li
-                    key={item}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center">
-                      <Zap className="w-3 h-3 text-secondary" />
-                    </div>
-                    <span className="text-foreground">{item}</span>
-                  </motion.li>
+                  <li key={item}>
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-center gap-3"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-secondary/20 flex items-center justify-center">
+                        <Zap className="w-3 h-3 text-secondary" />
+                      </div>
+                      <span className="text-foreground">{item}</span>
+                    </motion.div>
+                  </li>
                 ))}
               </ul>
               <Link to="/career">

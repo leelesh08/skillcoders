@@ -1,3 +1,77 @@
+# Stripe Checkout Example (Express)
+
+This folder contains a minimal Node.js + Express example showing how to create Stripe Checkout sessions and handle webhooks.
+
+Environment variables
+- `STRIPE_SECRET_KEY` - Stripe secret key (starts with `sk_...`).
+- `STRIPE_WEBHOOK_SECRET` - webhook signing secret from Stripe dashboard.
+- `FRONTEND_URL` - URL to redirect users after success/cancel (e.g., `http://localhost:8081`).
+- `CURRENCY` (optional) - currency code, default `inr`.
+
+Quick start
+
+1. Install dependencies:
+
+```bash
+npm install express stripe body-parser
+```
+
+2. Run the example (set env vars):
+
+```bash
+STRIPE_SECRET_KEY=sk_test_xxx STRIPE_WEBHOOK_SECRET=whsec_xxx FRONTEND_URL=http://localhost:8081 node server/stripe-example.js
+```
+
+Endpoints
+- `POST /checkout` - create a checkout session. Accepts either `items` array (with productId, name, price, quantity) or `amount` (for simple single-item flows). Returns `{ sessionId, url }`.
+- `POST /webhook` - webhook receiver. Use raw body and the Stripe signature to verify events, then handle `checkout.session.completed` to fulfill orders.
+
+- `GET /session/:id` - retrieve a checkout session by ID. The example server expands `line_items.data.price.product` so you can inspect product metadata and session.metadata (userId, orderId) for fulfillment or UI confirmation.
+
+Orders persistence (mock)
+
+The example server stores created orders in `server/orders.json` when a checkout session is created. Each order looks like:
+
+```json
+{
+	"orderId": "...",
+	"userId": "...",
+	"type": "gadget|course|battle",
+	"itemId": "...",
+	"sessionId": "cs_...",
+	"fulfilled": false,
+	"createdAt": "..."
+}
+```
+
+Test endpoints:
+
+- `GET /orders/:orderId` — return stored order record.
+- `PUT /orders/:orderId/fulfill` — mark stored order as fulfilled (useful for testing/manual fulfillment).
+
+Webhook behavior:
+
+When `checkout.session.completed` is received and `session.metadata.orderId` is present, the webhook handler will mark the corresponding order `fulfilled: true` and add `paidAt` timestamp in `orders.json`.
+
+Stripe CLI webhook forwarding (local testing)
+
+Install the Stripe CLI and forward webhook events to your local server for development:
+
+```bash
+# login once
+stripe login
+
+# forward events to port 4242 (example)
+stripe listen --forward-to localhost:4242/webhook
+```
+
+This will print a webhook signing secret (use `stripe listen --print-secret` or copy from output) — set that value as `STRIPE_WEBHOOK_SECRET` when running the example server so it can verify signatures.
+
+
+
+Security notes
+- Create Stripe sessions on the server using your **secret** key. Never store or use secret keys in frontend code.
+- Use the webhook signing secret to verify incoming webhook events.
 # Backend (Express + Firebase Admin)
 
 This minimal backend provides:

@@ -1,0 +1,36 @@
+{
+  "24641df4-fee9-4110-8f63-46b0ef0d15f2": {
+    "orderId": "24641df4-fee9-4110-8f63-46b0ef0d15f2",
+    "userId": "tester",
+    "type": "battle",
+    "itemId": "1",
+    "team": "red",
+    "sessionId": "cs_mock_1771829957076",
+    "fulfilled": true,
+    "createdAt": "2026-02-23T06:59:17.077Z",
+    "paidAt": "2026-02-23T07:02:15.711Z",
+    "winner": {
+      "userId": "tester",
+      "team": "red",
+      "amount": 25,
+      "markedAt": "2026-02-23T07:12:11.395Z"
+    },
+    "payout": {
+      "status": "mocked",
+      "info": "No STRIPE_PAYOUT_ACCOUNT configured; marked as paid locally"
+    },
+    "paidOut": true,
+    "paidOutAt": "2026-02-23T07:12:11.395Z"
+  },
+  "e59fb154-f55a-44ba-8f43-3e13e152db6d": {
+    "orderId": "e59fb154-f55a-44ba-8f43-3e13e152db6d",
+    "userId": "anonymous",
+    "type": "gadget",
+    "itemId": "5",
+    "team": "",
+    "sessionId": "cs_mock_1771915906219",
+    "fulfilled": true,
+    "createdAt": "2026-02-24T06:51:46.223Z",
+    "paidAt": "2026-02-24T07:03:38.970Z"
+  }
+}

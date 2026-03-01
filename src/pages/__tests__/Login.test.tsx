@@ -4,6 +4,8 @@ import Login from '../Login';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 
+let fetchMock: ReturnType<typeof vi.fn>;
+
 // Mock firebase auth and getIdToken
 vi.mock('@/lib/firebase', () => ({ auth: {} }));
 vi.mock('firebase/auth', () => ({
@@ -15,7 +17,8 @@ vi.mock('firebase/auth', () => ({
 describe('Login page', () => {
   beforeEach(() => {
     // mock fetch
-    global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ uid: 'test' }) })) as any;
+    fetchMock = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ uid: 'test' }) }));
+    (global as unknown as { fetch: typeof fetch }).fetch = fetchMock as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -38,7 +41,8 @@ describe('Login page', () => {
     fireEvent.click(button);
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalled());
-    const [url, opts] = (global.fetch as any).mock.calls[0];
+    // access the mock created in beforeEach via the global fetch reference
+    const [url, opts] = (fetchMock as any).mock.calls[0];
     expect(opts.method).toBe('POST');
     const body = JSON.parse(opts.body);
     expect(body).toHaveProperty('idToken', 'fake-id-token');

@@ -1,4 +1,5 @@
- import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
  import { Brain, Trophy, Zap, Target, ChevronRight, Star, Lock, CheckCircle } from 'lucide-react';
  import ParticleBackground from '@/components/ParticleBackground';
@@ -18,6 +19,14 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
  
  const domains = quizDomainsConst.map((d) => ({ ...d, completed: 0 }));
 
+type Domain = {
+  id: number;
+  name: string;
+  icon?: ReactNode;
+  questions?: number;
+  completed?: number;
+};
+
  const defaultLevels = Array.from({ length: 10 }, (_, i) => ({
    level: i + 1,
    questions: getLevelQuestions(i + 1),
@@ -35,7 +44,7 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
      completed: 0,
      streak: 0,
    });
-   const [domainsState, setDomainsState] = useState(domains);
+  const [domainsState, setDomainsState] = useState<Domain[]>(domains);
    const [levelsState, setLevelsState] = useState(defaultLevels);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
@@ -63,19 +72,19 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
      };
    }, []);
  
-   const getQuestionsForDomain = (domainId: number): QuizQuestion[] => {
-     const domain = quizDomains.find(d => d.id === domainId);
-     if (!domain) return [];
-     const domainQuestions = sampleQuestions.filter(q => q.domain === domain.name);
-     if (domainQuestions.length === 0) {
-       // Fallback to all questions if no domain-specific ones
-       return sampleQuestions.slice(0, 5);
-     }
-     return domainQuestions.slice(0, 5);
-   };
+  const getQuestionsForDomain = useCallback((domainId: number): QuizQuestion[] => {
+    const domain = domainsState.find(d => d.id === domainId);
+    if (!domain) return [];
+    const domainQuestions = sampleQuestions.filter(q => q.domain === domain.name);
+    if (domainQuestions.length === 0) {
+      // Fallback to all questions if no domain-specific ones
+      return sampleQuestions.slice(0, 5);
+    }
+    return domainQuestions.slice(0, 5);
+  }, [domainsState]);
  
    const selectedDomainData = useMemo(() => {
-     return domainsState.find((d: any) => d.id === selectedDomain);
+     return domainsState.find((d: Domain) => d.id === selectedDomain) as Domain | undefined;
    }, [selectedDomain, domainsState]);
  
    const handleStartQuiz = (level: number) => {
@@ -98,10 +107,10 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
      }
    };
  
-   const quizQuestions = useMemo(() => {
-     if (!selectedDomain) return [];
-     return getQuestionsForDomain(selectedDomain);
-   }, [selectedDomain]);
+  const quizQuestions = useMemo(() => {
+    if (!selectedDomain) return [];
+    return getQuestionsForDomain(selectedDomain);
+  }, [selectedDomain, getQuestionsForDomain]);
 
   if (loading) return <Loading message="Loading quizzes..." />;
   if (error) return <ErrorMessage message={error} />;
@@ -167,7 +176,7 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
             <div className="lg:col-span-1">
               <h2 className="text-xl font-semibold mb-4">Select Domain</h2>
               <div className="space-y-3">
-                {domains.map((domain, index) => (
+                {domainsState.map((domain, index) => (
                   <motion.div
                     key={domain.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -206,7 +215,7 @@ import ErrorMessage from '@/components/ui/ErrorMessage';
             <div className="lg:col-span-2">
               <h2 className="text-xl font-semibold mb-4">Progress Through Levels</h2>
               <div className="grid sm:grid-cols-2 gap-4">
-                {levels.map((level, index) => (
+                {levelsState.map((level, index) => (
                   <motion.div
                     key={level.level}
                     initial={{ opacity: 0, y: 20 }}

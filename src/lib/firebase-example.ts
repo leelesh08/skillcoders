@@ -4,7 +4,7 @@ import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
 } from "firebase/auth";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, type WhereFilterOp } from "firebase/firestore";
 
 // Auth helpers
 export async function signIn(email: string, password: string) {
@@ -20,14 +20,14 @@ export async function signOut() {
 }
 
 // Firestore helpers (simple examples)
-export async function addDocument(collectionName: string, data: Record<string, any>) {
+export async function addDocument(collectionName: string, data: Record<string, unknown>) {
   const col = collection(db, collectionName);
   return addDoc(col, data);
 }
 
-export async function queryDocuments(collectionName: string, field: string, op: string, value: any) {
+export async function queryDocuments(collectionName: string, field: string, op: WhereFilterOp, value: unknown) {
   const col = collection(db, collectionName);
-  const q = query(col, where(field, op as any, value));
+  const q = query(col, where(field, op, value as unknown));
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
 }

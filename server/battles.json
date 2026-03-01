@@ -1,0 +1,24 @@
+{
+  "edef4ab1-b427-4339-ab22-9e07bf6d3393": {
+    "id": "edef4ab1-b427-4339-ab22-9e07bf6d3393",
+    "title": "Test Match",
+    "prize": 1000,
+    "entryFee": 50,
+    "creator": "alice",
+    "viewers": 0,
+    "participants": [],
+    "active": true,
+    "createdAt": "2026-02-23T08:17:23.364Z"
+  },
+  "2eee19a2-8bf7-448f-ad6e-f82c3f907cb5": {
+    "id": "2eee19a2-8bf7-448f-ad6e-f82c3f907cb5",
+    "title": "New Match from CLI",
+    "prize": 500,
+    "entryFee": 50,
+    "creator": "you",
+    "viewers": 0,
+    "participants": [],
+    "active": true,
+    "createdAt": "2026-02-23T09:16:56.839Z"
+  }
+}
