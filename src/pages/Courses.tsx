@@ -16,6 +16,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Loading from '@/components/ui/Loading';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { useCart } from '@/contexts/CartContext';
+import CourseModal from '@/components/CourseModal';
 
 type Course = {
   id: string | number;
@@ -255,6 +256,7 @@ const Courses = () => {
   const [courses, setCourses] = useState<Course[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [processingCourse, setProcessingCourse] = useState<string | number | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const navigate = useNavigate();
   const { add } = useCart();
 
@@ -398,13 +400,23 @@ const Courses = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course, index) => {
               return (
-                <div key={course.id}>
-                  <GlowCard className="p-0 overflow-hidden" glowColor="blue">
+                <motion.div
+                  key={course.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="cursor-pointer"
+                  onClick={() => setSelectedCourse(course)}
+                >
+                  <GlowCard className="p-0 overflow-hidden transition-transform hover:scale-[1.02]" glowColor="blue">
                     <div className="relative">
                       <img src={course.image ?? ''} alt={course.title} className="w-full h-48 object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
                       <Badge className="absolute top-3 left-3 bg-primary/80">{course.level}</Badge>
-                      <button className="absolute bottom-3 right-3 w-12 h-12 rounded-full bg-primary flex items-center justify-center">
+                      <button
+                        className="absolute bottom-3 right-3 w-12 h-12 rounded-full bg-primary flex items-center justify-center"
+                        onClick={(e) => { e.stopPropagation(); setSelectedCourse(course); }}
+                      >
                         <Play className="w-5 h-5 text-primary-foreground" />
                       </button>
                     </div>
@@ -428,19 +440,33 @@ const Courses = () => {
 
                       <div className="flex items-center justify-between">
                         <span className="text-xl font-bold text-primary">₹{(course.price ?? 0).toLocaleString()}</span>
-                        <Button size="sm" variant="outline" onClick={() => add({ id: course.id, title: course.title, price: course.price ?? 0, quantity: 1 })}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            add({ id: course.id, title: course.title, price: course.price ?? 0, quantity: 1 });
+                          }}
+                        >
                           Add to Cart
                         </Button>
                       </div>
                     </div>
                   </GlowCard>
-                </div>
+                </motion.div>
               );
             })}
           </div>
         </div>
       </main>
       <Footer />
+
+      {/* Course detail modal */}
+      <CourseModal
+        course={selectedCourse}
+        onClose={() => setSelectedCourse(null)}
+        onEnroll={handleEnroll}
+      />
     </div>
   );
 };

@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
 import { useCart } from '@/contexts/CartContext';
+import GadgetModal from '@/components/GadgetModal';
 
 interface Gadget {
   id: number;
@@ -96,6 +97,7 @@ const gadgets: Gadget[] = [
 const Gadgets = () => {
   const { add } = useCart();
   const [processingId, setProcessingId] = useState<string | number | null>(null);
+  const [selectedGadget, setSelectedGadget] = useState<Gadget | null>(null);
 
   const handleAddToCart = (gadget: Gadget) => {
     add({ id: gadget.id, title: gadget.name, price: gadget.price ?? 0, quantity: 1 });
@@ -190,8 +192,10 @@ const Gadgets = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + index * 0.1 }}
+                className="cursor-pointer"
+                onClick={() => setSelectedGadget(gadget)}
               >
-                <GlowCard className="p-0 overflow-hidden" glowColor="cyan">
+                <GlowCard className="p-0 overflow-hidden transition-transform hover:scale-[1.02]" glowColor="cyan">
                   <div className="relative">
                     <img
                       src={gadget.image}
@@ -199,10 +203,9 @@ const Gadgets = () => {
                       className="w-full h-48 object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
-                    <Badge 
-                      className={`absolute top-3 left-3 ${
-                        gadget.inStock ? 'bg-green-500/80' : 'bg-red-500/80'
-                      }`}
+                    <Badge
+                      className={`absolute top-3 left-3 ${gadget.inStock ? 'bg-green-500/80' : 'bg-red-500/80'
+                        }`}
                     >
                       {gadget.inStock ? 'In Stock' : 'Out of Stock'}
                     </Badge>
@@ -213,7 +216,7 @@ const Gadgets = () => {
                   <div className="p-6">
                     <h3 className="text-lg font-semibold mb-2">{gadget.name}</h3>
                     <p className="text-sm text-muted-foreground mb-4">{gadget.description}</p>
-                    
+
                     <div className="flex items-center gap-2 mb-4">
                       <div className="flex items-center gap-1">
                         <Star className="w-4 h-4 fill-yellow-500 text-yellow-500" />
@@ -229,11 +232,11 @@ const Gadgets = () => {
                         ₹{gadget.price.toLocaleString()}
                       </span>
                       <div className="flex items-center gap-2">
-                        <GlowButton 
+                        <GlowButton
                           variant="secondary"
                           size="sm"
                           disabled={!gadget.inStock}
-                          onClick={() => handleAddToCart(gadget)}
+                          onClick={(e) => { e.stopPropagation(); handleAddToCart(gadget); }}
                         >
                           <ShoppingCart className="w-4 h-4 mr-2" />
                           {gadget.inStock ? 'Add to Cart' : 'Notify Me'}
@@ -242,7 +245,7 @@ const Gadgets = () => {
                           variant="primary"
                           size="sm"
                           disabled={!gadget.inStock || processingId === gadget.id}
-                          onClick={() => handleBuy(gadget)}
+                          onClick={(e) => { e.stopPropagation(); handleBuy(gadget); }}
                         >
                           {processingId === gadget.id ? 'Processing...' : 'Buy Now'}
                         </GlowButton>
@@ -255,7 +258,14 @@ const Gadgets = () => {
           </div>
         </div>
       </main>
-     <Footer />
+      <Footer />
+
+      {/* Gadget detail modal */}
+      <GadgetModal
+        gadget={selectedGadget}
+        onClose={() => setSelectedGadget(null)}
+        onBuy={handleBuy}
+      />
     </div>
   );
 };

@@ -7,9 +7,9 @@ interface GlowButtonProps {
   variant?: 'primary' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
   className?: string;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
-   type?: 'button' | 'submit' | 'reset';
+  type?: 'button' | 'submit' | 'reset';
 }
 
 const GlowButton = ({
@@ -19,10 +19,10 @@ const GlowButton = ({
   className,
   onClick,
   disabled = false,
-   type = 'button',
+  type = 'button',
 }: GlowButtonProps) => {
   const baseStyles = "relative font-semibold rounded-lg transition-all duration-300 overflow-hidden shadow-[0_0_12px_hsl(var(--cyber-blue)/0.25),0_0_24px_hsl(var(--cyber-blue)/0.1)] hover:shadow-[0_0_20px_hsl(var(--cyber-blue)/0.4),0_0_40px_hsl(var(--cyber-blue)/0.15)]";
-  
+
   const variants = {
     primary: "bg-primary text-primary-foreground hover:bg-primary/90",
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-[0_0_12px_hsl(var(--cyber-purple)/0.25),0_0_24px_hsl(var(--cyber-purple)/0.1)] hover:shadow-[0_0_20px_hsl(var(--cyber-purple)/0.4),0_0_40px_hsl(var(--cyber-purple)/0.15)]",
@@ -40,7 +40,7 @@ const GlowButton = ({
       className={cn(baseStyles, variants[variant], sizes[size], className)}
       onClick={onClick}
       disabled={disabled}
-     type={type}
+      type={type}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
     >
@@ -48,14 +48,14 @@ const GlowButton = ({
       <motion.div
         className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300"
         style={{
-          background: variant === 'primary' 
+          background: variant === 'primary'
             ? 'radial-gradient(circle at center, hsla(199, 89%, 48%, 0.4) 0%, transparent 70%)'
             : variant === 'secondary'
-            ? 'radial-gradient(circle at center, hsla(262, 83%, 58%, 0.4) 0%, transparent 70%)'
-            : 'radial-gradient(circle at center, hsla(199, 89%, 48%, 0.2) 0%, transparent 70%)',
+              ? 'radial-gradient(circle at center, hsla(262, 83%, 58%, 0.4) 0%, transparent 70%)'
+              : 'radial-gradient(circle at center, hsla(199, 89%, 48%, 0.2) 0%, transparent 70%)',
         }}
       />
-      
+
       {/* Shimmer effect */}
       <motion.div
         className="absolute inset-0 -translate-x-full"
@@ -65,7 +65,7 @@ const GlowButton = ({
           background: 'linear-gradient(90deg, transparent, hsla(0, 0%, 100%, 0.1), transparent)',
         }}
       />
-      
+
       <span className="relative z-10">{children}</span>
     </motion.button>
   );
