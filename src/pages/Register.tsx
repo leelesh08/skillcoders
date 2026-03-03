@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import scLogo from '@/assets/sc_logo.png';
 import {
   signInWithGooglePopup,
+  signInWithGithubPopup,
   createUserWithEmailAndPassword,
   signInWithPhoneNumber,
   createRecaptchaVerifier,
@@ -151,7 +152,7 @@ const Register = () => {
         }
         setError(msg);
       } finally {
-        setLoading(true);
+        setLoading(false);
       }
     }
   };
@@ -192,6 +193,43 @@ const Register = () => {
       setError(msg);
     } finally {
       setLoading(true);
+    }
+  };
+
+  const handleGithubSignUp = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const cred = await signInWithGithubPopup();
+      const idToken = await cred.user.getIdToken();
+
+      const apiUrl = import.meta.env.VITE_API_URL ?? '';
+      const resp = await fetch(`${apiUrl}/verifyToken`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body?.error || `Verification failed: ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      console.log('GitHub signup verified:', data);
+      navigate('/');
+    } catch (err: unknown) {
+      console.error('GitHub sign-up error', err);
+      let msg = 'GitHub sign-up failed';
+      if (err && typeof err === 'object' && 'message' in err) {
+        const m = (err as { message?: unknown }).message;
+        msg = typeof m === 'string' ? m : String(m);
+      } else {
+        msg = String(err);
+      }
+      setError(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -291,7 +329,7 @@ const Register = () => {
                   transition={{ delay: 0.2 + index * 0.1 }}
                   whileHover={{ scale: 1.02, x: 5 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={provider.name === 'Google' ? handleGoogleSignUp : undefined}
+                  onClick={provider.name === 'Google' ? handleGoogleSignUp : provider.name === 'GitHub' ? handleGithubSignUp : undefined}
                   disabled={loading}
                   aria-disabled={loading}
                   type="button"
@@ -321,12 +359,14 @@ const Register = () => {
                 type="button"
                 onClick={() => {
                   setAuthMethod('email');
-                  setVerificationStep(true);
+                  setVerificationStep(false);
                   setOtp('');
+                  setConfirmationResult(null);
+                  setError(null);
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'email'
-                    ? 'bg-primary/20 text-primary font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-primary/20 text-primary font-medium'
+                  : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 <Mail className="w-4 h-4" />
@@ -336,12 +376,14 @@ const Register = () => {
                 type="button"
                 onClick={() => {
                   setAuthMethod('phone');
-                  setVerificationStep(true);
+                  setVerificationStep(false);
                   setOtp('');
+                  setConfirmationResult(null);
+                  setError(null);
                 }}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md transition-all ${authMethod === 'phone'
-                    ? 'bg-primary/20 text-primary font-medium'
-                    : 'text-muted-foreground hover:text-foreground'
+                  ? 'bg-primary/20 text-primary font-medium'
+                  : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 <Phone className="w-4 h-4" />
@@ -478,8 +520,8 @@ const Register = () => {
                       type="button"
                       onClick={() => setFormData({ ...formData, role: 'student' })}
                       className={`p-3 rounded-xl border-2 transition-all duration-300 ${formData.role === 'student'
-                          ? 'border-primary bg-primary/10'
-                          : 'border-border hover:border-primary/50'
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/50'
                         }`}
                     >
                       <GraduationCap className={`w-6 h-6 mx-auto mb-1 ${formData.role === 'student' ? 'text-primary' : 'text-muted-foreground'
@@ -493,8 +535,8 @@ const Register = () => {
                       type="button"
                       onClick={() => setFormData({ ...formData, role: 'instructor' })}
                       className={`p-3 rounded-xl border-2 transition-all duration-300 ${formData.role === 'instructor'
-                          ? 'border-secondary bg-secondary/10'
-                          : 'border-border hover:border-secondary/50'
+                        ? 'border-secondary bg-secondary/10'
+                        : 'border-border hover:border-secondary/50'
                         }`}
                     >
                       <Briefcase className={`w-6 h-6 mx-auto mb-1 ${formData.role === 'instructor' ? 'text-secondary' : 'text-muted-foreground'
