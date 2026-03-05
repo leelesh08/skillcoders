@@ -19,7 +19,7 @@ npm run build
 
 ```bash
 firebase login
-firebase deploy --only hosting --project skill-coders-2025
+firebase deploy --only hosting --project skillcoders-33ed3
 ```
 
 4) CI / GitHub Actions: the repo includes `.github/workflows/firebase-hosting-deploy.yml` which builds and deploys on pushes to `main`.
